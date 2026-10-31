@@ -1,0 +1,36 @@
+# Captura do normas.leg.br: semanal e sob demanda. Grava os arquivos sem alteração em
+# dados/fonte/ e só faz commit quando algum arquivo mudou.
+name: Captura das normas
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * 1" # segundas, 06:17 em Brasília
+
+permissions:
+  contents: write
+
+jobs:
+  captura:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Capturar
+        run: npm run captura
+      - name: Testar a leitura
+        run: npm test
+        continue-on-error: true
+      - name: Gravar se mudou
+        run: |
+          if git diff --quiet -- dados/fonte ':!dados/fonte/manifesto.json'; then
+            echo "Nenhuma norma mudou."
+          else
+            git config user.name "captura-automatica"
+            git config user.email "captura@users.noreply.github.com"
+            git add dados/fonte
+            git commit -m "Captura das normas: $(date -u +%Y-%m-%d)"
+            git push
+          fi

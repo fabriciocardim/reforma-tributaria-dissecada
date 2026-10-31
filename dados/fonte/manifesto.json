@@ -1,0 +1,27 @@
+{
+  "capturadoEm": "2026-10-31T13:36:00.000Z",
+  "origem": "normas.leg.br, captura pelo navegador (primeira carga, antes do script)",
+  "normas": [
+    {
+      "nome": "lc-214-2025",
+      "urn": "urn:lex:br:federal:lei.complementar:2025-01-16;214",
+      "bytes": 5413200,
+      "sha256": "2554da1cc6cad062b348ffb866a62e0e8a62e5ddb9c6f013156fa876bcf8196b",
+      "modificadaNaFonte": "2026-08-27"
+    },
+    {
+      "nome": "constituicao-1988",
+      "urn": "urn:lex:br:federal:constituicao:1988-10-05;1988",
+      "bytes": 4797131,
+      "sha256": "936dd329e7a9e4de46747062391a9699710ae47f25f7611a76e5e506a06d7173",
+      "modificadaNaFonte": "2026-10-16"
+    },
+    {
+      "nome": "ec-132-2023",
+      "urn": "urn:lex:br:federal:emenda.constitucional:2023-12-20;132",
+      "bytes": 739051,
+      "sha256": "ed2443bd821ec138f0086f0c2dd0063072b27be2c6066af35d9123dcd026624d",
+      "modificadaNaFonte": null
+    }
+  ]
+}
