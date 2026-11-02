@@ -1,39 +1,39 @@
 # Reforma Tributária Dissecada
 
-Site estático para estudar a reforma tributária do consumo dispositivo por dispositivo (Lei Complementar 214/2025 e Emenda Constitucional 132/2023), para o estudo de Auditor Fiscal (Sefaz-BA). Design completo e decisões: `docs/design.md` — leia antes de qualquer mudança de arquitetura, escopo ou fluxo de conteúdo; este arquivo só traz o que vale em toda tarefa.
+Site estático e aberto para estudar a reforma tributária do consumo (Lei Complementar 214/2025, Emenda Constitucional 132/2023, alterações da Lei Complementar 227/2026), dispositivo por dispositivo. O design acordado está em `docs/design.md`: leia antes de propor qualquer mudança de escopo.
 
-## Princípios invioláveis
+## Regras que não se negociam
 
-Errar a letra da lei custa a questão da prova. Por isso:
+1. **Texto legal só da fonte, sem edição.** Nunca escreva, resuma dentro do bloco de texto oficial, corrija ou "complete" texto de lei. Ele vem de `dados/fonte/` e é exibido como veio. Num mockup feito de memória em 31/10/2026, o § 1º do art. 4º saiu com uma remissão ao art. 5º que não existe no texto real: é por isso que esta regra existe.
+2. **Interpretação aparece como interpretação.** Todo texto gerado por inteligência artificial (para que serve, antes e depois, notas de gatilho, resumo de tema) fica em bloco separado, rotulado "não é texto de lei", e nasce com `conferida: false`. Só o Fabrício marca `conferida: true`.
+3. **Remissões determinísticas.** Remissão vaga ("nos termos do regulamento", "nesta Lei Complementar" sem artigo) aparece como "não resolvida". Nunca adivinhe o alvo.
+4. **Lacunas honestas.** O que não se sabe (data de efeitos ainda não montada, anexo não carregado) aparece como lacuna ou marcador entre colchetes, nunca como valor plausível.
+5. **Impressão digital.** Cada explicação guarda o hash do texto legal que explicou; se a redação mudar, a ficha volta a não conferida.
 
-1. **Texto oficial intacto.** O texto legal vem só de `dados/fonte/` (captura do normas.leg.br), sem nenhuma edição, nunca reescrito ou resumido no lugar do original.
-2. **Interpretação separada e marcada.** Qualquer explicação gerada por IA fica visualmente distinta do texto de lei, nasce `conferida: false` e carrega a impressão digital do texto que explicou. Nunca mude o texto legal para "encaixar" numa explicação.
-3. **Lacuna é lacuna.** Dado que falta aparece como "não carregada" ou "não resolvida" — nunca um valor plausível no lugar.
-4. **Remissões não são chute.** O gerador resolve remissões absolutas e relativas e expande um nível; o resto é link. Nunca a IA adivinha o alvo de uma remissão vaga.
+## A fonte: normas.leg.br
 
-## Estrutura
+- `GET https://normas.leg.br/api/public/normas?urn=<URN>&tipo_documento=maior-detalhe`, sem chave, licença Creative Commons Atribuição 4.0. A lista de normas fica em `captura/fontes.ts`.
+- JSON-LD (schema.org `Legislation`). Cada nó de dispositivo tem `legislationIdentifier`, `legislationType` (tipo estrutural em `@id`, terminado em `tipo.dispositivo:<tipo>`), `hasPart` (filhos) e `workExample` (uma ou várias versões).
+- Cada versão traz `legislationType` (`Original_Version`, `Text_Change_Version`, `Insertion_Version`, `Repeal_Version`, `Court_Decision_Version`, vetos, renumeração; às vezes dois separados por vírgula), `legislationDate` (data da ALTERAÇÃO, não de efeitos), `name` (rótulo), `text`, `legislationConsolidates` (dispositivo que causou a mudança), `legislationLegalForce`, `temporalCoverage` e `publisherNote`.
+- Dispositivos inseridos têm sufixo no identificador (`art4_par6,lcp-227-2026-01-13`); `captura/ler.ts` normaliza para `art4_par6`.
+- Hierarquia: `componente.autonomo.articulado` › `articulacao` › livro › título › capítulo › seção › artigo › caput/parágrafo › inciso › alínea › item. Alterações de outras leis vêm dentro de `bloco.de.alteracao`.
+- As remissões para outras normas já vêm marcadas no texto: `<span xlink:href="urn:lex:...!art155_cpt_inc1">`. O texto também traz `<i>` (por exemplo, em "caput").
+- Lacunas conhecidas: os anexos não vêm estruturados; a data de produção de efeitos não vem por dispositivo (sai do art. 544).
+- O ambiente de nuvem do Claude não alcança o normas.leg.br. A captura roda no computador do Fabrício (`npm run captura`) ou nas automações do GitHub (`.github/workflows/captura.yml`, semanal e sob demanda).
 
-```text
-captura/   captura do normas.leg.br e leitura da base (TypeScript, com testes)
-dados/     base capturada, sem alteração, e o manifesto com data e impressão digital
-conteudo/  temas e fichas em Markdown — explicações; nunca o texto legal
-gerador/   montagem das páginas e do índice de busca
-docs/      design e decisões (docs/design.md é a referência)
-```
+## Código
 
-`conteudo/`, `gerador/` e `site/` ainda não existem neste repositório — fazem parte do plano, não do estado atual.
+- TypeScript sem framework e sem dependências, executado direto pelo Node.js 22.18 ou mais recente (remoção de tipos nativa): use imports com extensão `.ts` e evite `enum`, `namespace` e propriedades de parâmetro.
+- Testes com `node --test` contra a captura real (`npm test`). Um teste que quebra depois de nova captura é aviso de que a lei mudou: investigue, não ajuste o teste às cegas.
+- `gerador/citacao.ts` veio da extensão Mentor Web e ainda precisa ser estendido para remissões relativas.
 
-## Comandos
+## Referências fora do repositório
 
-```sh
-npm run captura   # baixa as normas de novo e grava em dados/fonte/
-npm test          # confere a leitura da base contra a captura
-```
+- Documento de design no Claude (origem do `docs/design.md`): https://claude.ai/artifact/488bo3YjWGb2LaqcUaKnxm
+- Mockups do site (página inicial, tema "Fato gerador", ficha do art. 4º com o texto real): https://claude.ai/artifact/FmRcgqUg1yX288cj39DG6U
 
-Node.js >= 22.18, sem dependências externas. `npm run captura` não funciona neste ambiente (o sandbox do Claude não alcança normas.leg.br); roda no computador do autor ou na automação do GitHub Actions.
+## Com o Fabrício
 
-## Convenções
-
-- TypeScript sem framework; reaproveita o reconhecedor de citações da extensão Mentor Web (`normas/citacao.ts`), copiado para `gerador/`.
-- Testes com `node --test`, nunca outro runner.
-- Identificador de dispositivo segue o padrão LexML (`...;214!art4_par2_inc1`) — é também o endereço da ficha.
+- Escreva em português do Brasil e não use siglas ou abreviações sem a descrição por extenso.
+- Ele estuda 3 horas por dia, de segunda a sábado, para Auditor Fiscal da Secretaria da Fazenda da Bahia (Tecnologia da Informação, banca Cesgranrio). Construir o site não pode tirar tempo desse estudo; prefira entregas pequenas.
+- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; gerador e lote 1 (5 temas de fundação).

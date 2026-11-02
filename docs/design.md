@@ -100,6 +100,10 @@ Na lateral fica a linha do tempo do dispositivo. O painel "suas questões neste 
 
 **Página de tema**, além disso: uma tabela "antes e depois" por aspecto (fato gerador, contribuinte, base, alíquota, crédito, local) e o ano em que cada mudança produz efeito.
 
+### Mockups
+
+Os mockups do site (página inicial, página de tema e ficha do art. 4º com o texto real) estão em https://claude.ai/artifact/FmRcgqUg1yX288cj39DG6U. O texto das explicações neles é ilustrativo; o texto legal da ficha é o real.
+
 ## Arquitetura
 
 Tudo acontece na compilação: o site publicado são só arquivos HTML, um índice de busca e um pouco de JavaScript, sem servidor e sem chave.
