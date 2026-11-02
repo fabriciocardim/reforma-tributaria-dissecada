@@ -10,6 +10,8 @@ export interface LeiPronta {
   href: string;
   nome: string;
   artigos: number;
+  /** Fichas com "Para que serve" gerado. */
+  explicacoes: number;
 }
 
 interface Tema {
@@ -46,7 +48,7 @@ export function gerarInicial(leis: LeiPronta[], capturadoEm: string, baseAtualiz
 ${l.temas.map((t) => `<div class="tema"><span class="nome">${escapar(t.nome)}</span><span class="nota">Em preparação${t.nota ? ` · ${escapar(t.nota)}` : ""}</span></div>`).join("\n")}
 </div>`,
   ).join("\n");
-  const lista = leis.map((l) => `<li><a href="${escapar(l.href)}">${escapar(l.nome)}</a> <span class="nota">${l.artigos} artigos</span></li>`).join("\n");
+  const lista = leis.map((l) => `<li><a href="${escapar(l.href)}">${escapar(l.nome)}</a> <span class="nota">${l.artigos} artigos · ${l.explicacoes} com "Para que serve" gerado por inteligência artificial</span></li>`).join("\n");
   const base = baseAtualizadaEm ? `<span>Base atualizada na fonte até ${dataBr(baseAtualizadaEm)}</span>` : "";
 
   return `<!doctype html>

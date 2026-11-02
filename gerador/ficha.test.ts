@@ -7,7 +7,7 @@ import { dataBr, descreverDispositivo, etiquetaRedacao, gerarFicha, montarLinhaD
 /* Contra a captura real de 31/10/2026. Se uma nova captura mudar estes dispositivos, o teste falha de propósito. */
 
 const base = carregarBaseSincrona();
-const cfg = { catalogo: base.catalogo, capturadoEm: "2026-10-31T12:00:00.000Z", mostrarEfeitos };
+const cfg = { catalogo: base.catalogo, capturadoEm: "2026-10-31T12:00:00.000Z", mostrarEfeitos, explicacoes: new Map() };
 const lc = norma(base, "lc-214-2025");
 const cf = norma(base, "constituicao-1988");
 const ficha = (n: typeof lc, id: string): string => gerarFicha(cfg, n, id);

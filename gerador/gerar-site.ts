@@ -8,6 +8,7 @@ import { gerarFicha, type ConfiguracaoFicha } from "./ficha.ts";
 import { gerarIndice } from "./indice.ts";
 import { gerarInicial } from "./inicial.ts";
 import { carregarBase, mostrarEfeitos } from "./carregar.ts";
+import { carregarExplicacoes } from "./explicacao.ts";
 
 const RAIZ = new URL("../", import.meta.url);
 
@@ -23,6 +24,7 @@ async function gerar(): Promise<void> {
     catalogo,
     capturadoEm: manifesto.capturadoEm,
     mostrarEfeitos,
+    explicacoes: carregarExplicacoes(RAIZ, normas),
   };
   await rm(new URL("site/", RAIZ), { recursive: true, force: true });
   for (const norma of normas) {
@@ -34,7 +36,12 @@ async function gerar(): Promise<void> {
   await gravar(
     "index.html",
     gerarInicial(
-      normas.map((n) => ({ href: `lei/${n.slug}/`, nome: n.nome, artigos: n.artigos.length })),
+      normas.map((n) => ({
+        href: `lei/${n.slug}/`,
+        nome: n.nome,
+        artigos: n.artigos.length,
+        explicacoes: n.artigos.filter((a) => cfg.explicacoes.has(`${n.slug}|${a.id}`)).length,
+      })),
       manifesto.capturadoEm,
       modificada,
     ),

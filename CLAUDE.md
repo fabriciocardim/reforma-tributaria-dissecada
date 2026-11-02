@@ -29,6 +29,14 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 - `gerador/citacao.ts` veio da extensão Mentor Web e ainda não é usado. As remissões sem marcação da fonte são resolvidas por `gerador/referencias.ts`, só quando o próprio texto ancora o alvo ("art. 44 desta Lei Complementar", "§ 3º deste artigo"); sem âncora, fica "não resolvida". Nunca amplie essa gramática sem teste contra a captura real.
 - `npm run site` gera o site inteiro (as três normas, índices e a página inicial) em `site/`, que não vai para o git; a publicação roda na `main`. `gerador/ficha.test.ts` confere que o texto de todo dispositivo sai intacto em todas as fichas.
 
+## Explicações ("Para que serve")
+
+- Ficam em `conteudo/fichas/<norma>/<endereço da ficha>.md` (por exemplo `lc-214-2025/art-4.md`), com o cabeçalho `norma`, `artigo` (id na base), `conferida`, `conferida_em`, `gerada_em`, `impressao_digital` e as três seções `O que é`, `Para que serve` e `Como funciona`. `gerador/explicacao.ts` define e valida o formato.
+- Para escrever uma: leia o texto da captura (cada afirmação precisa estar nele), escreva o arquivo com `impressao_digital: carimbar` e rode `npm run carimbar`, que grava a impressão digital do texto legal explicado. Nunca troque uma impressão que já existe.
+- Nasce `conferida: false`. Só o Fabrício muda para `true` (com `conferida_em`). Se o texto legal mudar, a ficha mostra o alerta de desatualizada.
+- Escreva sem sigla que o texto da lei não tenha explicado, cite dispositivos ("§ 2º", "inciso IV") e diga quando a fonte registra veto ou revogação. Não afirme o que o artigo não diz.
+- Lotes feitos: LC 214/2025, arts. 1º a 26 (inclui o art. 7º-A).
+
 ## Referências fora do repositório
 
 - Documento de design no Claude (origem do `docs/design.md`): https://claude.ai/artifact/488bo3YjWGb2LaqcUaKnxm
@@ -38,4 +46,4 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 
 - Escreva em português do Brasil e não use siglas ou abreviações sem a descrição por extenso.
 - Ele estuda 3 horas por dia, de segunda a sábado, para Auditor Fiscal da Secretaria da Fazenda da Bahia (Tecnologia da Informação, banca Cesgranrio). Construir o site não pode tirar tempo desse estudo; prefira entregas pequenas.
-- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; gerador e lote 1 (5 temas de fundação).
+- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; "Para que serve" do art. 27 em diante; páginas de tema; palavras-gatilho.

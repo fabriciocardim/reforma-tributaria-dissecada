@@ -7,7 +7,11 @@
 import { ancestrais, redacaoAtual, type Dispositivo, type Versao } from "../captura/ler.ts";
 import { emBloco, TIPOS_ESTRUTURA, type Catalogo, type Destino, type Norma } from "./norma.ts";
 import { resolverLocais } from "./referencias.ts";
+import { renderizarExplicacao, type Explicacao } from "./explicacao.ts";
 import { escapar, renderizarTextoLegal, type Opcoes } from "./remissao.ts";
+import { dataBr, subarvore } from "./util.ts";
+
+export { dataBr, subarvore };
 
 export interface ItemTrilha {
   id: string;
@@ -25,15 +29,12 @@ export interface ConfiguracaoFicha {
   capturadoEm: string;
   /** Mostra "Efeitos: não carregada" na versão (a tabela de efeitos do art. 544 ainda não existe). */
   mostrarEfeitos: (norma: Norma, versao: Versao) => boolean;
+  /** Explicações "Para que serve", por "<norma>|<id do artigo>". */
+  explicacoes: Map<string, Explicacao>;
 }
 
 const NIVEL: Record<string, number> = { caput: 0, paragrafo: 1, inciso: 2, alinea: 3, item: 4 };
 const LIMITE_EXPANSAO = 30;
-
-export function dataBr(iso: string): string {
-  const [a, m, d] = iso.slice(0, 10).split("-");
-  return a && m && d ? `${d}/${m}/${a}` : iso;
-}
 
 const ROTULOS_VERSAO: Record<string, string> = {
   Insertion_Version: "Incluído",
@@ -67,19 +68,6 @@ export function montarTrilha(norma: Norma, artigo: Dispositivo): ItemTrilha[] {
     const v = redacaoAtual(a);
     return v && v.rotulo && TIPOS_ESTRUTURA.includes(a.tipo) ? [{ id: a.id, rotulo: v.rotulo, titulo: v.texto ?? "" }] : [];
   });
-}
-
-export function subarvore(porId: Map<string, Dispositivo>, raiz: Dispositivo): Dispositivo[] {
-  const saida: Dispositivo[] = [];
-  const visitar = (d: Dispositivo): void => {
-    saida.push(d);
-    for (const f of d.filhos) {
-      const filho = porId.get(f);
-      if (filho) visitar(filho);
-    }
-  };
-  visitar(raiz);
-  return saida;
 }
 
 const rotuloCurto = (r: string): string => r.replace(/[\s.–]+$/, "");
@@ -285,6 +273,7 @@ export function gerarFicha(cfg: ConfiguracaoFicha, norma: Norma, idArtigo: strin
 ${corpo}
 </div>
 </section>
+${renderizarExplicacao(norma, norma.slugs.get(artigo.id)!, artigo, cfg.explicacoes.get(`${norma.slug}|${artigo.id}`))}
 </main>
 <aside>
 <section aria-labelledby="t5">
@@ -298,7 +287,7 @@ ${tempo}
 </div>
 <footer><div class="miolo">
 <p><strong>Não substitui o texto oficial.</strong> Texto legal do <a href="https://normas.leg.br">normas.leg.br</a>, licença <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Atribuição 4.0</a>.</p>
-<p>Explicações geradas por inteligência artificial ainda não existem nesta ficha. Conteúdo próprio sob licença Creative Commons Atribuição.</p>
+<p>Explicações geradas por inteligência artificial; cada uma mostra se foi conferida e quando. Conteúdo próprio sob licença Creative Commons Atribuição.</p>
 </div></footer>
 </body>
 </html>
@@ -350,6 +339,18 @@ summary{cursor:pointer;color:var(--link);font-weight:500;min-height:44px;display
 .alt-rotulo{font-family:var(--sans);font-size:12px!important;font-weight:600;color:var(--suave);letter-spacing:.04em;text-transform:uppercase}
 .omissis{color:var(--suave);letter-spacing:.1em;overflow:hidden;white-space:nowrap}
 .estrutura{font-family:var(--sans);font-size:14px!important;color:var(--suave)}
+.ia{background:#FCFBFF;border:1.5px dashed #9C86CF}
+.ia.vazio{background:var(--cartao);border:1.5px dashed #CFCABD}
+.rotulo-ia,.origem-ia{color:#4A2F86}
+.origem-ia{font-size:12px}
+.aviso{margin-top:12px;border-radius:8px;padding:8px 12px;font-size:13px}
+.nao-conferida{background:#FFF1D6;color:#5C4300}
+.conferida{background:#E4F2EC;color:#1F5C43}
+.desatualizada{background:#FDE8E4;color:#8A2A17}
+.explicacao{margin-top:12px;font-size:16px;line-height:1.6;display:flex;flex-direction:column;gap:10px}
+.explicacao p{margin:0}
+.rodape-ia{margin-top:14px;padding-top:12px;border-top:1px solid #E6DFF5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;font-size:13px;color:var(--suave)}
+.botao{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid #9C86CF;border-radius:8px;text-decoration:none;color:#4A2F86;font-weight:500}
 .tempo{margin:12px 0 0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.45}
 .tempo ul{margin:2px 0 0;padding-left:16px}
 .nota{margin:10px 0 0;font-size:12px;color:var(--suave)}

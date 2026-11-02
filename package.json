@@ -8,6 +8,7 @@
   "scripts": {
     "captura": "node captura/capturar.ts",
     "site": "node gerador/gerar-site.ts",
-    "test": "node --test"
+    "test": "node --test",
+    "carimbar": "node gerador/carimbar.ts"
   }
 }
