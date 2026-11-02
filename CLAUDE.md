@@ -18,6 +18,7 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 - Dispositivos inseridos têm sufixo no identificador (`art4_par6,lcp-227-2026-01-13`); `captura/ler.ts` normaliza para `art4_par6`.
 - Hierarquia: `componente.autonomo.articulado` › `articulacao` › livro › título › capítulo › seção › artigo › caput/parágrafo › inciso › alínea › item. Alterações de outras leis vêm dentro de `bloco.de.alteracao`.
 - As remissões para outras normas já vêm marcadas no texto: `<span xlink:href="urn:lex:...!art155_cpt_inc1">`. O texto também traz `<i>` (por exemplo, em "caput").
+- Armadilhas da fonte: o texto também traz `<b>` e entidades (`&quot;`); versão `Vetoed_*` não é texto em vigor (a fonte ainda marca a anterior como fora de vigor, então a ficha mostra as duas e a nota); a Constituição repete identificadores (dispositivo reposicionado ou renumerado), e `ler.ts` deixa o sufixo nos repetidos; `art156-1` é o art. 156-A; artigos dentro de `bloco.de.alteracao` são texto de outra norma e não ganham página.
 - Lacunas conhecidas: os anexos não vêm estruturados; a data de produção de efeitos não vem por dispositivo (sai do art. 544).
 - O ambiente de nuvem do Claude não alcança o normas.leg.br. A captura roda no computador do Fabrício (`npm run captura`) ou nas automações do GitHub (`.github/workflows/captura.yml`, semanal e sob demanda).
 
@@ -25,7 +26,8 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 
 - TypeScript sem framework e sem dependências, executado direto pelo Node.js 22.18 ou mais recente (remoção de tipos nativa): use imports com extensão `.ts` e evite `enum`, `namespace` e propriedades de parâmetro.
 - Testes com `node --test` contra a captura real (`npm test`). Um teste que quebra depois de nova captura é aviso de que a lei mudou: investigue, não ajuste o teste às cegas.
-- `gerador/citacao.ts` veio da extensão Mentor Web e ainda precisa ser estendido para remissões relativas.
+- `gerador/citacao.ts` veio da extensão Mentor Web e ainda não é usado. As remissões sem marcação da fonte são resolvidas por `gerador/referencias.ts`, só quando o próprio texto ancora o alvo ("art. 44 desta Lei Complementar", "§ 3º deste artigo"); sem âncora, fica "não resolvida". Nunca amplie essa gramática sem teste contra a captura real.
+- `npm run site` gera o site inteiro (as três normas, índices e a página inicial) em `site/`, que não vai para o git; a publicação roda na `main`. `gerador/ficha.test.ts` confere que o texto de todo dispositivo sai intacto em todas as fichas.
 
 ## Referências fora do repositório
 

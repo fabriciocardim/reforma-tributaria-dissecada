@@ -6,9 +6,10 @@
 import { escapar } from "./remissao.ts";
 import { CSS_BASE, dataBr } from "./ficha.ts";
 
-export interface FichaPronta {
+export interface LeiPronta {
   href: string;
-  titulo: string;
+  nome: string;
+  artigos: number;
 }
 
 interface Tema {
@@ -38,14 +39,14 @@ const LOTES: { lote: number; temas: Tema[] }[] = [
   { lote: 4, temas: [{ nome: "Transição de 2026 a 2033" }, { nome: "Comitê Gestor e fiscalização" }] },
 ];
 
-export function gerarInicial(fichas: FichaPronta[], capturadoEm: string, baseAtualizadaEm: string | null): string {
+export function gerarInicial(leis: LeiPronta[], capturadoEm: string, baseAtualizadaEm: string | null): string {
   const lotes = LOTES.map(
     (l) => `<h3 class="rotulo">Lote ${l.lote}</h3>
 <div class="grade">
 ${l.temas.map((t) => `<div class="tema"><span class="nome">${escapar(t.nome)}</span><span class="nota">Em preparação${t.nota ? ` · ${escapar(t.nota)}` : ""}</span></div>`).join("\n")}
 </div>`,
   ).join("\n");
-  const lista = fichas.map((f) => `<li><a href="${escapar(f.href)}">${escapar(f.titulo)}</a></li>`).join("\n");
+  const lista = leis.map((l) => `<li><a href="${escapar(l.href)}">${escapar(l.nome)}</a> <span class="nota">${l.artigos} artigos</span></li>`).join("\n");
   const base = baseAtualizadaEm ? `<span>Base atualizada na fonte até ${dataBr(baseAtualizadaEm)}</span>` : "";
 
   return `<!doctype html>
@@ -65,8 +66,8 @@ ${l.temas.map((t) => `<div class="tema"><span class="nome">${escapar(t.nome)}</s
 </div></div>
 <main class="miolo miolo-inicial">
 <section aria-labelledby="fichas">
-<h2 id="fichas">Fichas disponíveis</h2>
-<p class="nota">Cada ficha traz o dispositivo com o texto oficial intacto, as remissões e a linha do tempo.</p>
+<h2 id="fichas">Leis carregadas</h2>
+<p class="nota">Cada artigo tem uma ficha com o texto oficial intacto, as remissões abertas e a linha do tempo das redações.</p>
 <ul class="fichas">
 ${lista}
 </ul>

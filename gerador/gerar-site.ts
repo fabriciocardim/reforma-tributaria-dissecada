@@ -1,14 +1,13 @@
 /*
- * Gera o site em site/: a página inicial e a ficha do art. 4º da Lei Complementar 214/2025
- * (site/lei/lc-214-2025/art-4/index.html).
+ * Gera o site completo em site/: a página inicial e, para cada norma de captura/fontes.ts, o índice
+ * (site/lei/<norma>/index.html) e a ficha de cada artigo (site/lei/<norma>/art-<n>/index.html).
  * Uso: node gerador/gerar-site.ts
  */
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { lerNorma } from "../captura/ler.ts";
-import type { Manifesto } from "../captura/capturar.ts";
-import { FONTES } from "../captura/fontes.ts";
-import { gerarFicha, type Lei } from "./ficha.ts";
+import { writeFile, mkdir, rm } from "node:fs/promises";
+import { gerarFicha, type ConfiguracaoFicha } from "./ficha.ts";
+import { gerarIndice } from "./indice.ts";
 import { gerarInicial } from "./inicial.ts";
+import { carregarBase, mostrarEfeitos } from "./carregar.ts";
 
 const RAIZ = new URL("../", import.meta.url);
 
@@ -16,26 +15,35 @@ async function gravar(caminho: string, html: string): Promise<void> {
   const arquivo = new URL(`site/${caminho}`, RAIZ);
   await mkdir(new URL(".", arquivo), { recursive: true });
   await writeFile(arquivo, html);
-  console.log(arquivo.pathname);
 }
 
 async function gerar(): Promise<void> {
-  const fonte = FONTES.find((f) => f.nome === "lc-214-2025")!;
-  const lei: Lei = { slug: fonte.nome, nome: "Lei Complementar 214/2025", urn: fonte.urn };
-  const json: unknown = JSON.parse(await readFile(new URL(`dados/fonte/${fonte.nome}.json`, RAIZ), "utf8"));
-  const manifesto = JSON.parse(await readFile(new URL("dados/fonte/manifesto.json", RAIZ), "utf8")) as Manifesto;
-  const modificada = manifesto.normas.find((n) => n.nome === fonte.nome)?.modificadaNaFonte ?? null;
-
-  await gravar(`lei/${lei.slug}/art-4/index.html`, gerarFicha(lei, lerNorma(json), "art4", manifesto.capturadoEm));
+  const { normas, catalogo, manifesto } = await carregarBase();
+  const cfg: ConfiguracaoFicha = {
+    catalogo,
+    capturadoEm: manifesto.capturadoEm,
+    mostrarEfeitos,
+  };
+  await rm(new URL("site/", RAIZ), { recursive: true, force: true });
+  for (const norma of normas) {
+    await gravar(`lei/${norma.slug}/index.html`, gerarIndice(norma, manifesto.capturadoEm));
+    for (const artigo of norma.artigos) await gravar(`lei/${norma.slug}/${norma.slugs.get(artigo.id)}/index.html`, gerarFicha(cfg, norma, artigo.id));
+    console.log(`${norma.slug}: ${norma.artigos.length} fichas`);
+  }
+  const modificada = manifesto.normas.find((n) => n.nome === "lc-214-2025")?.modificadaNaFonte ?? null;
   await gravar(
     "index.html",
-    gerarInicial([{ href: `lei/${lei.slug}/art-4/`, titulo: `${lei.nome}, art. 4º` }], manifesto.capturadoEm, modificada),
+    gerarInicial(
+      normas.map((n) => ({ href: `lei/${n.slug}/`, nome: n.nome, artigos: n.artigos.length })),
+      manifesto.capturadoEm,
+      modificada,
+    ),
   );
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   gerar().catch((erro: unknown) => {
-    console.error(erro instanceof Error ? erro.message : erro);
+    console.error(erro instanceof Error ? erro.stack : erro);
     process.exit(1);
   });
 }

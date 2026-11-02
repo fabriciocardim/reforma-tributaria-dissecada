@@ -75,3 +75,19 @@ test("o art. 4º fica no Livro I, Título I, Capítulo II, Seção I", () => {
   const cadeia = ancestrais(porId, d("art4")).map((x) => x.id);
   assert.deepEqual(cadeia, ["", "articulacao", "liv1", "liv1_tit1", "liv1_tit1_cap2", "liv1_tit1_cap2_sec1"]);
 });
+
+const cf = lerNorma(JSON.parse(readFileSync(new URL("../dados/fonte/constituicao-1988.json", import.meta.url), "utf8")));
+
+test("Constituição: identificadores repetidos pela fonte ficam únicos, com o sufixo", () => {
+  assert.equal(new Set(cf.map((x) => x.id)).size, cf.length);
+  const arts134 = cf.filter((x) => x.id.startsWith("art134") && x.tipo === "artigo").map((x) => x.id).sort();
+  assert.deepEqual(arts134, ["art134", "art134,emc-80-2014-06-04"]);
+});
+
+test("Constituição: pai e filhos usam os ids únicos", () => {
+  const porIdCf = new Map(cf.map((x) => [x.id, x]));
+  for (const x of cf) {
+    if (x.pai !== null) assert.ok(porIdCf.has(x.pai), `pai de ${x.id}`);
+    for (const f of x.filhos) assert.ok(porIdCf.has(f), `filho ${f} de ${x.id}`);
+  }
+});

@@ -17,6 +17,9 @@ export type TipoVersao =
   | "Vetoed_Insertion_Version"
   | "Vetoed_Text_Change_Version"
   | "Text_Indirect_Change_Version"
+  | "Suppression_By_Moviment_Version"
+  | "Insertion_By_Moviment_Version"
+  | "Applicability_Suppression_Version"
   | (string & {});
 
 export interface Versao {
@@ -38,7 +41,7 @@ export interface Versao {
 }
 
 export interface Dispositivo {
-  /** Identificador sem a norma e sem o sufixo de inserção: "art4_par6". */
+  /** Identificador sem a norma e sem o sufixo de inserção: "art4_par6". Se a norma repete o curto, vem com o sufixo. */
   id: string;
   /** Identificador completo como veio da fonte: "urn:...;214!art4_par6,lcp-227-2026-01-13". */
   idFonte: string;
@@ -85,12 +88,41 @@ function lerVersao(w: Obj): Versao {
   };
 }
 
+/** "urn:…;214!art4_par6,lcp-227-2026-01-13" → "art4_par6,lcp-227-2026-01-13" (o que vem depois do "!"). */
+function idComSufixo(idFonte: string): string {
+  return idFonte.includes("!") ? idFonte.slice(idFonte.indexOf("!") + 1) : "";
+}
+
+function contarIds(raiz: Obj): Set<string> {
+  const vistos = new Set<string>();
+  const repetidos = new Set<string>();
+  const visitar = (no: Obj): void => {
+    const curto = idCurto(typeof no.legislationIdentifier === "string" ? no.legislationIdentifier : "");
+    if (vistos.has(curto)) repetidos.add(curto);
+    vistos.add(curto);
+    for (const f of lista(no.hasPart)) visitar(f);
+  };
+  for (const no of lista(raiz.hasPart)) visitar(no);
+  return repetidos;
+}
+
+/**
+ * Lista plana de dispositivos. O `id` é o identificador curto; quando a norma repete o curto
+ * (a Constituição repete: dispositivo reposicionado ou renumerado por emenda), os repetidos
+ * ficam com o identificador completo, com sufixo, para que cada nó tenha um id único.
+ */
 export function lerNorma(json: unknown): Dispositivo[] {
   const raiz = json as Obj;
+  const repetidos = contarIds(raiz);
+  const idDe = (no: Obj): string => {
+    const idFonte = typeof no.legislationIdentifier === "string" ? no.legislationIdentifier : "";
+    const curto = idCurto(idFonte);
+    return repetidos.has(curto) ? idComSufixo(idFonte) : curto;
+  };
   const saida: Dispositivo[] = [];
   const visitar = (no: Obj, pai: string | null): void => {
     const idFonte = typeof no.legislationIdentifier === "string" ? no.legislationIdentifier : "";
-    const id = idCurto(idFonte);
+    const id = idDe(no);
     const filhosNos = lista(no.hasPart);
     const d: Dispositivo = {
       id,
@@ -102,8 +134,7 @@ export function lerNorma(json: unknown): Dispositivo[] {
     };
     saida.push(d);
     for (const f of filhosNos) {
-      const idFilho = idCurto(typeof f.legislationIdentifier === "string" ? f.legislationIdentifier : "");
-      d.filhos.push(idFilho);
+      d.filhos.push(idDe(f));
       visitar(f, id);
     }
   };
