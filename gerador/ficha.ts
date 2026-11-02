@@ -139,10 +139,10 @@ export function gerarFicha(lei: Lei, dispositivos: Dispositivo[], idArtigo: stri
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapar(titulo)}</title>
-<style>${CSS}</style>
+<style>${CSS_BASE}</style>
 </head>
 <body>
-<header class="topo"><div class="miolo"><span class="marca">Reforma Tributária Dissecada</span></div></header>
+<header class="topo"><div class="miolo"><a class="marca" href="../../../">Reforma Tributária Dissecada</a></div></header>
 <div class="miolo pagina">
 <main>
 <section aria-labelledby="t1">
@@ -176,14 +176,14 @@ ${tempo}
 `;
 }
 
-const CSS = `
+export const CSS_BASE = `
 :root{--fundo:#F6F5F1;--cartao:#fff;--borda:#E2DFD6;--tinta:#1C1B19;--suave:#55524B;--link:#1F4E8C;--serifa:Georgia,"Times New Roman",serif;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
 body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--sans)}
 a{color:var(--link)}a:hover{color:#163A69}
 .miolo{max-width:1180px;margin:0 auto;padding:0 24px}
 .topo{background:var(--cartao);border-bottom:1px solid var(--borda)}
-.marca{display:inline-block;padding:12px 0;font-family:var(--serifa);font-size:20px;font-weight:600}
+.marca{text-decoration:none;color:inherit;display:inline-block;padding:12px 0;font-family:var(--serifa);font-size:20px;font-weight:600}
 .pagina{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;padding-top:24px;padding-bottom:48px}
 main{flex:999 1 620px;min-width:0;display:flex;flex-direction:column;gap:20px}
 aside{flex:1 1 280px;min-width:0}

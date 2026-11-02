@@ -7,7 +7,7 @@
   },
   "scripts": {
     "captura": "node captura/capturar.ts",
-    "site": "node gerador/gerar-ficha.ts",
+    "site": "node gerador/gerar-site.ts",
     "test": "node --test"
   }
 }
