@@ -18,6 +18,8 @@ export interface ItemManifesto {
   sha256: string;
   /** dateModified informado pela fonte; null quando ela não informa. */
   modificadaNaFonte: string | null;
+  /** Texto HTML da versão vigente, para normas que a fonte entrega só com metadados. */
+  texto?: { url: string; bytes: number; sha256: string };
 }
 
 export interface Manifesto {
@@ -55,9 +57,24 @@ async function capturar(): Promise<void> {
       throw new Error(`${fonte.nome}: a fonte respondeu HTTP ${resposta.status}. Nada foi gravado.`);
     }
     const bytes = Buffer.from(await resposta.arrayBuffer());
-    const json = JSON.parse(bytes.toString("utf8")) as { dateModified?: string };
+    const json = JSON.parse(bytes.toString("utf8")) as { dateModified?: string; encoding?: { version?: string; contentUrl?: string | null }[] };
     const sha256 = createHash("sha256").update(bytes).digest("hex");
-    normas.push({ nome: fonte.nome, urn: fonte.urn, bytes: bytes.length, sha256, modificadaNaFonte: json.dateModified ?? null });
+    const item: ItemManifesto = { nome: fonte.nome, urn: fonte.urn, bytes: bytes.length, sha256, modificadaNaFonte: json.dateModified ?? null };
+    if (fonte.textoHtml) {
+      const url = json.encoding?.find((e) => e.version === "Current")?.contentUrl;
+      const resposta = url ? await fetch(url, { headers: { Accept: "text/html" } }).catch(() => null) : null;
+      if (!url || resposta?.status !== 200) {
+        const motivo = !url ? "a fonte não informa o endereço do texto vigente" : `o texto respondeu HTTP ${resposta?.status ?? "sem resposta"}`;
+        if (!fonte.opcional) throw new Error(`${fonte.nome}: ${motivo}. Nada foi gravado.`);
+        console.warn(`${fonte.nome}: ${motivo}; norma opcional, seguindo sem o texto.`);
+      } else {
+        const html = Buffer.from(await resposta.arrayBuffer());
+        await writeFile(new URL(`${fonte.nome}.html`, PASTA), html);
+        item.texto = { url, bytes: html.length, sha256: createHash("sha256").update(html).digest("hex") };
+        console.log(`${fonte.nome}: texto vigente, ${html.length} bytes`);
+      }
+    }
+    normas.push(item);
     const antes = anterior?.normas.find((n) => n.nome === fonte.nome);
     console.log(`${fonte.nome}: ${bytes.length} bytes, ${antes?.sha256 === sha256 ? "sem mudança" : "MUDOU"}`);
     await writeFile(new URL(`${fonte.nome}.json`, PASTA), bytes);

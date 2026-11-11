@@ -12,6 +12,7 @@ test("a legislação anterior é opcional e não vira página; as normas do site
     const f = FONTES.find((x) => x.nome === nome)!;
     assert.equal(f.opcional, true, nome);
     assert.equal(f.publicar, false, nome);
+    assert.equal(f.textoHtml, true, nome);
   }
   for (const nome of ["lc-214-2025", "constituicao-1988", "ec-132-2023"]) {
     const f = FONTES.find((x) => x.nome === nome)!;
