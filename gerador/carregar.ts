@@ -23,20 +23,23 @@ export interface Base {
   manifesto: Manifesto;
 }
 
+/** Normas que viram páginas do site; as de consulta (legislação anterior) ficam de fora. */
+const PUBLICADAS = FONTES.filter((f) => f.publicar !== false);
+
 function montar(jsons: unknown[], manifesto: Manifesto): Base {
-  const normas = FONTES.map((f, i) => montarNorma({ slug: f.nome, nome: NOMES[f.nome] ?? f.nome, urn: f.urn }, lerNorma(jsons[i])));
+  const normas = PUBLICADAS.map((f, i) => montarNorma({ slug: f.nome, nome: NOMES[f.nome] ?? f.nome, urn: f.urn }, lerNorma(jsons[i])));
   return { normas, catalogo: new Catalogo(normas), manifesto };
 }
 
 export async function carregarBase(): Promise<Base> {
   const manifesto = JSON.parse(await readFile(new URL("dados/fonte/manifesto.json", RAIZ), "utf8")) as Manifesto;
-  const jsons = await Promise.all(FONTES.map(async (f) => JSON.parse(await readFile(new URL(`dados/fonte/${f.nome}.json`, RAIZ), "utf8")) as unknown));
+  const jsons = await Promise.all(PUBLICADAS.map(async (f) => JSON.parse(await readFile(new URL(`dados/fonte/${f.nome}.json`, RAIZ), "utf8")) as unknown));
   return montar(jsons, manifesto);
 }
 
 export function carregarBaseSincrona(): Base {
   const manifesto = JSON.parse(readFileSync(new URL("dados/fonte/manifesto.json", RAIZ), "utf8")) as Manifesto;
-  const jsons = FONTES.map((f) => JSON.parse(readFileSync(new URL(`dados/fonte/${f.nome}.json`, RAIZ), "utf8")) as unknown);
+  const jsons = PUBLICADAS.map((f) => JSON.parse(readFileSync(new URL(`dados/fonte/${f.nome}.json`, RAIZ), "utf8")) as unknown);
   return montar(jsons, manifesto);
 }
 

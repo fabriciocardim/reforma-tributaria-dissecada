@@ -39,8 +39,21 @@ async function capturar(): Promise<void> {
   const anterior = await manifestoAnterior();
   const normas: ItemManifesto[] = [];
   for (const fonte of FONTES) {
-    const resposta = await fetch(urlDaFonte(fonte.urn), { headers: { Accept: "application/json" } });
-    if (resposta.status !== 200) throw new Error(`${fonte.nome}: a fonte respondeu HTTP ${resposta.status}. Nada foi gravado.`);
+    let resposta: Response;
+    try {
+      resposta = await fetch(urlDaFonte(fonte.urn), { headers: { Accept: "application/json" } });
+    } catch (erro) {
+      if (!fonte.opcional) throw erro;
+      console.warn(`${fonte.nome}: sem resposta da fonte (${erro instanceof Error ? erro.message : String(erro)}); norma opcional, seguindo sem ela.`);
+      continue;
+    }
+    if (resposta.status !== 200) {
+      if (fonte.opcional) {
+        console.warn(`${fonte.nome}: a fonte respondeu HTTP ${resposta.status}; norma opcional, seguindo sem ela.`);
+        continue;
+      }
+      throw new Error(`${fonte.nome}: a fonte respondeu HTTP ${resposta.status}. Nada foi gravado.`);
+    }
     const bytes = Buffer.from(await resposta.arrayBuffer());
     const json = JSON.parse(bytes.toString("utf8")) as { dateModified?: string };
     const sha256 = createHash("sha256").update(bytes).digest("hex");
@@ -48,6 +61,9 @@ async function capturar(): Promise<void> {
     const antes = anterior?.normas.find((n) => n.nome === fonte.nome);
     console.log(`${fonte.nome}: ${bytes.length} bytes, ${antes?.sha256 === sha256 ? "sem mudança" : "MUDOU"}`);
     await writeFile(new URL(`${fonte.nome}.json`, PASTA), bytes);
+  }
+  for (const antes of anterior?.normas ?? []) {
+    if (!normas.some((n) => n.nome === antes.nome) && FONTES.some((f) => f.nome === antes.nome)) normas.push(antes);
   }
   const manifesto: Manifesto = { capturadoEm: new Date().toISOString(), origem: "normas.leg.br, script de captura", normas };
   await writeFile(new URL("manifesto.json", PASTA), JSON.stringify(manifesto, null, 2) + "\n");
