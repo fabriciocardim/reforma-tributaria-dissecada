@@ -1,4 +1,0 @@
-Diagnóstico da captura do texto de lc-87-1996
-https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp87.htm
-cabeçalhos padrão: fetch failed
-com User-Agent do projeto: fetch failed

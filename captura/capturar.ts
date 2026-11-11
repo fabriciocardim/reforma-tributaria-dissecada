@@ -49,7 +49,8 @@ async function baixarTexto(url: string): Promise<{ html: Buffer | null; tentativ
       tentativas.push(`${rotulo}: HTTP ${r.status} ${r.headers.get("content-type") ?? ""}`.trim());
       if (r.status === 200) return { html: Buffer.from(await r.arrayBuffer()), tentativas };
     } catch (erro) {
-      tentativas.push(`${rotulo}: ${erro instanceof Error ? erro.message : String(erro)}`);
+      const causa = erro instanceof Error ? (erro.cause as { code?: string; message?: string } | undefined) : undefined;
+      tentativas.push(`${rotulo}: ${erro instanceof Error ? erro.message : String(erro)}${causa ? ` [${causa.code ?? ""} ${causa.message ?? ""}]` : ""}`);
     }
   }
   return { html: null, tentativas };
