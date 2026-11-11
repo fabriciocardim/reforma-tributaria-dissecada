@@ -15,6 +15,7 @@ export interface LeiPronta {
 }
 
 interface Tema {
+  slug: string;
   nome: string;
   nota?: string;
 }
@@ -23,29 +24,44 @@ const LOTES: { lote: number; temas: Tema[] }[] = [
   {
     lote: 1,
     temas: [
-      { nome: "Fato gerador" },
-      { nome: "Não incidência e imunidades" },
-      { nome: "Sujeito passivo e responsabilidade" },
-      { nome: "Local da operação (destino)" },
-      { nome: "Base de cálculo" },
+      { slug: "fato-gerador", nome: "Fato gerador" },
+      { slug: "nao-incidencia-e-imunidades", nome: "Não incidência e imunidades" },
+      { slug: "sujeito-passivo-e-responsabilidade", nome: "Sujeito passivo e responsabilidade" },
+      { slug: "local-da-operacao", nome: "Local da operação (destino)" },
+      { slug: "base-de-calculo", nome: "Base de cálculo" },
     ],
   },
   {
     lote: 2,
-    temas: [{ nome: "Alíquotas e alíquota de referência" }, { nome: "Não cumulatividade e créditos" }, { nome: "Recolhimento e divisão do pagamento" }],
+    temas: [{ slug: "aliquotas", nome: "Alíquotas e alíquota de referência" }, { slug: "nao-cumulatividade-e-creditos", nome: "Não cumulatividade e créditos" }, { slug: "recolhimento-e-divisao-do-pagamento", nome: "Recolhimento e divisão do pagamento" }],
   },
   {
     lote: 3,
-    temas: [{ nome: "Regimes diferenciados" }, { nome: "Regimes específicos", nota: "panorama" }, { nome: "Imposto Seletivo" }],
+    temas: [{ slug: "regimes-diferenciados", nome: "Regimes diferenciados" }, { slug: "regimes-especificos", nome: "Regimes específicos", nota: "panorama" }, { slug: "imposto-seletivo", nome: "Imposto Seletivo" }],
   },
-  { lote: 4, temas: [{ nome: "Transição de 2026 a 2033" }, { nome: "Comitê Gestor e fiscalização" }] },
+  { lote: 4, temas: [{ slug: "transicao", nome: "Transição de 2026 a 2033" }, { slug: "comite-gestor-e-fiscalizacao", nome: "Comitê Gestor e fiscalização" }] },
 ];
 
-export function gerarInicial(leis: LeiPronta[], capturadoEm: string, baseAtualizadaEm: string | null): string {
+export interface TemaPronto {
+  slug: string;
+  /** Rótulo da situação de conferência, por exemplo "Não conferido". */
+  situacao: string;
+  classe: string;
+}
+
+export function gerarInicial(leis: LeiPronta[], capturadoEm: string, baseAtualizadaEm: string | null, temas: TemaPronto[] = []): string {
+  const prontos = new Map(temas.map((t) => [t.slug, t]));
   const lotes = LOTES.map(
     (l) => `<h3 class="rotulo">Lote ${l.lote}</h3>
 <div class="grade">
-${l.temas.map((t) => `<div class="tema"><span class="nome">${escapar(t.nome)}</span><span class="nota">Em preparação${t.nota ? ` · ${escapar(t.nota)}` : ""}</span></div>`).join("\n")}
+${l.temas
+  .map((t) => {
+    const p = prontos.get(t.slug);
+    return p
+      ? `<a class="tema pronto" href="tema/${t.slug}/"><span class="nome">${escapar(t.nome)}</span><span class="selo ${p.classe}">${escapar(p.situacao)}</span></a>`
+      : `<div class="tema"><span class="nome">${escapar(t.nome)}</span><span class="nota">Em preparação${t.nota ? ` · ${escapar(t.nota)}` : ""}</span></div>`;
+  })
+  .join("\n")}
 </div>`,
   ).join("\n");
   const lista = leis.map((l) => `<li><a href="${escapar(l.href)}">${escapar(l.nome)}</a> <span class="nota">${l.artigos} artigos · ${l.explicacoes} com "Para que serve" gerado por inteligência artificial</span></li>`).join("\n");
@@ -104,6 +120,8 @@ h3.rotulo{margin:22px 0 10px}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .tema{display:flex;flex-direction:column;gap:6px;padding:16px;background:#FBFAF7;border:1px dashed #CFCABD;border-radius:12px}
 .tema .nome{font-size:16px;font-weight:600;color:#3D3A34}
+.tema.pronto{background:var(--cartao);border:1.5px solid #1F4E8C;text-decoration:none;align-items:flex-start}
+.tema.pronto .nome{color:var(--tinta)}
 .tema .nota{margin:0;font-size:13px;color:var(--suave)}
 @media (max-width:600px){.heroi h1{font-size:30px}}
 `;

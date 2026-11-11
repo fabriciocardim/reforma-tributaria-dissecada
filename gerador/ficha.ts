@@ -31,6 +31,8 @@ export interface ConfiguracaoFicha {
   mostrarEfeitos: (norma: Norma, versao: Versao) => boolean;
   /** Explicações "Para que serve", por "<norma>|<id do artigo>". */
   explicacoes: Map<string, Explicacao>;
+  /** Temas que citam o artigo, por "<norma>|<id do artigo>". */
+  temas?: Map<string, { slug: string; titulo: string }[]>;
 }
 
 const NIVEL: Record<string, number> = { caput: 0, paragrafo: 1, inciso: 2, alinea: 3, item: 4 };
@@ -242,6 +244,8 @@ export function gerarFicha(cfg: ConfiguracaoFicha, norma: Norma, idArtigo: strin
     return `<a href="../${norma.slugs.get(a.id)}/">${anterior ? `‹ ${escapar(r)}` : `${escapar(r)} ›`}</a>`;
   };
 
+  const doArtigo = cfg.temas?.get(`${norma.slug}|${artigo.id}`) ?? [];
+  const temasHtml = doArtigo.length ? `<p class="temas-do-artigo">Tema: ${doArtigo.map((t) => `<a href="../../../tema/${escapar(t.slug)}/">${escapar(t.titulo)}</a>`).join(", ")}</p>` : "";
   const corpo = pagina.no(artigo);
   const tempo = montarLinhaDoTempo(subarvore(norma.porId, artigo))
     .map((e) => `<li><strong>${dataBr(e.data)}</strong><ul>${e.itens.map((i) => `<li>${escapar(i)}</li>`).join("")}</ul></li>`)
@@ -265,6 +269,7 @@ export function gerarFicha(cfg: ConfiguracaoFicha, norma: Norma, idArtigo: strin
 <h2 id="t1" class="rotulo">Onde estou</h2>
 <nav aria-label="Posição na lei" class="trilha">${trilha}</nav>
 <h1>${escapar(rotuloArtigo)}</h1>
+${temasHtml}
 <div class="vizinhos">${vizinho(norma.artigos[posicao - 1], true)}${vizinho(norma.artigos[posicao + 1], false)}</div>
 </section>
 <section aria-labelledby="t2">
@@ -310,6 +315,7 @@ section{background:var(--cartao);border:1px solid var(--borda);border-radius:12p
 .trilha{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;color:var(--suave)}
 .trilha a{text-decoration:none}
 h1{margin:12px 0 0;font-family:var(--serifa);font-size:34px;font-weight:600;line-height:1.15}
+.temas-do-artigo{margin:10px 0 0;font-size:14px;color:var(--suave)}
 .vizinhos{margin-top:10px;display:flex;justify-content:space-between;font-size:14px}
 .vizinhos a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
 .cabeca{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline}

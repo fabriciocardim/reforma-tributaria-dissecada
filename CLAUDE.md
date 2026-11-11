@@ -39,6 +39,13 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 - Feito: todos os 580 artigos da LC 214/2025, gerados em 02 e 11/11/2026, todos não conferidos. Siglas que a lei não expande (IPCA, CNPJ, ICMS, MEI, CIDE e outras) foram escritas por extenso a partir de conhecimento externo, para cumprir a regra de siglas. Erros da própria fonte (art. 263 "art. 25 7", art. 284 "Comitê Geral do IBS") são registrados, não corrigidos.
 - Também feitos: os 24 artigos da Constituição Federal alterados pela Emenda Constitucional 132/2023 (art. 43, 50, 105, 145, 146, 149-A a C, 150, 153, 155, 156, 156-A, 156-B, 158, 159, 159-A, 161, 167, 177, 195, 198, 212-A e 225) e os 23 artigos da própria Emenda. Os outros 252 artigos da Constituição ficam sem explicação, de propósito (fora do escopo do design).
 
+## Temas
+
+- Ficam em `conteudo/temas/<tema>.md`; `gerador/tema.ts` define e valida o formato e gera `site/tema/<tema>/`. O cabeçalho traz `tema`, `titulo`, `lote`, `profundidade`, `conferida`, `conferida_em`, `gerada_em`, `impressao_digital` e `artigos` (lista `norma/artigo`). As seções são `Regra geral e exceções` (linhas `- norma/artigo | PAPEL | frase`), `O que é`, `Para que serve`, `Como funciona`, `Antes e depois` (linhas `- aspecto | depois | refs separadas por ; [| antes]`) e `Posição na transição`.
+- A impressão digital do tema cobre o texto legal de TODOS os artigos que ele cita (`npm run carimbar -- temas`). Todo artigo citado precisa já ter "Para que serve" e todo número e sigla do tema precisa existir no texto desses artigos (`gerador/tema.test.ts` confere).
+- O lado "antes" fica como lacuna até a legislação anterior (Lei Complementar 87/1996, Lei Complementar 116/2003) estar carregada em `captura/fontes.ts`. Não escreva o regime anterior de memória.
+- Feito: `fato-gerador`. Faltam os outros doze temas do `docs/design.md`.
+
 ## Referências fora do repositório
 
 - Documento de design no Claude (origem do `docs/design.md`): https://claude.ai/artifact/488bo3YjWGb2LaqcUaKnxm
@@ -48,4 +55,4 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 
 - Escreva em português do Brasil e não use siglas ou abreviações sem a descrição por extenso.
 - Ele estuda 3 horas por dia, de segunda a sábado, para Auditor Fiscal da Secretaria da Fazenda da Bahia (Tecnologia da Informação, banca Cesgranrio). Construir o site não pode tirar tempo desse estudo; prefira entregas pequenas.
-- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; páginas de tema; palavras-gatilho.
+- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; demais temas do lote 1; carga da legislação anterior para o lado "antes"; palavras-gatilho.

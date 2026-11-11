@@ -9,6 +9,7 @@ import { gerarIndice } from "./indice.ts";
 import { gerarInicial } from "./inicial.ts";
 import { carregarBase, mostrarEfeitos } from "./carregar.ts";
 import { carregarExplicacoes } from "./explicacao.ts";
+import { carregarTemas, gerarTema, impressaoDoTema, situacaoTema } from "./tema.ts";
 
 const RAIZ = new URL("../", import.meta.url);
 
@@ -26,12 +27,23 @@ async function gerar(): Promise<void> {
     mostrarEfeitos,
     explicacoes: carregarExplicacoes(RAIZ, normas),
   };
+  const base = { normas, catalogo, manifesto };
+  const temas = carregarTemas(RAIZ, base);
+  cfg.temas = new Map();
+  for (const t of temas) for (const r of t.artigos) {
+    const norma = normas.find((n) => n.slug === r.norma)!;
+    const artigo = norma.artigos.find((a) => norma.slugs.get(a.id) === r.ficha)!;
+    const chave = `${norma.slug}|${artigo.id}`;
+    cfg.temas.set(chave, [...(cfg.temas.get(chave) ?? []), { slug: t.tema, titulo: t.titulo }]);
+  }
   await rm(new URL("site/", RAIZ), { recursive: true, force: true });
   for (const norma of normas) {
     await gravar(`lei/${norma.slug}/index.html`, gerarIndice(norma, manifesto.capturadoEm));
     for (const artigo of norma.artigos) await gravar(`lei/${norma.slug}/${norma.slugs.get(artigo.id)}/index.html`, gerarFicha(cfg, norma, artigo.id));
     console.log(`${norma.slug}: ${norma.artigos.length} fichas`);
   }
+  for (const t of temas) await gravar(`tema/${t.tema}/index.html`, gerarTema(t, { base, explicacoes: cfg.explicacoes, capturadoEm: manifesto.capturadoEm }));
+  console.log(`${temas.length} tema(s)`);
   const modificada = manifesto.normas.find((n) => n.nome === "lc-214-2025")?.modificadaNaFonte ?? null;
   await gravar(
     "index.html",
@@ -44,6 +56,10 @@ async function gerar(): Promise<void> {
       })),
       manifesto.capturadoEm,
       modificada,
+      temas.map((t) => {
+        const s = situacaoTema(t, impressaoDoTema(base, t.artigos));
+        return { slug: t.tema, situacao: s === "conferida" ? "Conferido" : s === "desatualizada" ? "Texto legal mudou" : "Não conferido", classe: s === "conferida" ? "conferida" : s === "desatualizada" ? "desatualizada" : "nao-conferida" };
+      }),
     ),
   );
 }
