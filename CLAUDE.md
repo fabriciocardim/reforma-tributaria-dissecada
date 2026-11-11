@@ -35,7 +35,9 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 - Para escrever uma: leia o texto da captura (cada afirmação precisa estar nele), escreva o arquivo com `impressao_digital: carimbar` e rode `npm run carimbar`, que grava a impressão digital do texto legal explicado. Nunca troque uma impressão que já existe.
 - Nasce `conferida: false`. Só o Fabrício muda para `true` (com `conferida_em`). Se o texto legal mudar, a ficha mostra o alerta de desatualizada.
 - Escreva sem sigla que o texto da lei não tenha explicado, cite dispositivos ("§ 2º", "inciso IV") e diga quando a fonte registra veto ou revogação. Não afirme o que o artigo não diz.
-- Lotes feitos: LC 214/2025, arts. 1º a 26 (inclui o art. 7º-A).
+- Antes de carimbar, rode `npm run verificar -- lc-214-2025 <posição inicial> <posição final>`: confere que todo número e toda sigla da explicação existem no texto legal do artigo (ele não prova que a explicação está certa). `npm run carimbar -- lc-214-2025 <de> <até>` carimba só um intervalo.
+- Feito: todos os 580 artigos da LC 214/2025, gerados em 02 e 11/11/2026, todos não conferidos. Siglas que a lei não expande (IPCA, CNPJ, ICMS, MEI, CIDE e outras) foram escritas por extenso a partir de conhecimento externo, para cumprir a regra de siglas. Erros da própria fonte (art. 263 "art. 25 7", art. 284 "Comitê Geral do IBS") são registrados, não corrigidos.
+- Pendente: Constituição Federal e Emenda Constitucional 132/2023.
 
 ## Referências fora do repositório
 
@@ -46,4 +48,4 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 
 - Escreva em português do Brasil e não use siglas ou abreviações sem a descrição por extenso.
 - Ele estuda 3 horas por dia, de segunda a sábado, para Auditor Fiscal da Secretaria da Fazenda da Bahia (Tecnologia da Informação, banca Cesgranrio). Construir o site não pode tirar tempo desse estudo; prefira entregas pequenas.
-- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; "Para que serve" do art. 27 em diante; páginas de tema; palavras-gatilho.
+- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; "Para que serve" da Constituição e da Emenda Constitucional 132/2023; páginas de tema; palavras-gatilho.
