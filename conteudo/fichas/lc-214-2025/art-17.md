@@ -12,4 +12,4 @@ A regra da alíquota na devolução ou no cancelamento da operação.
 Evita que uma mudança de alíquota entre a operação e o seu desfazimento gere diferença: a devolução usa a mesma alíquota da operação original.
 
 ## Como funciona
-O artigo tem só o caput: a alíquota aplicada para fins de devolução ou cancelamento da operação é a mesma cobrada na operação original. Combina com o § 7º do art. 12, que faz o mesmo para a base de cálculo.
+O artigo tem só o caput: a alíquota aplicada para fins de devolução ou cancelamento da operação é a mesma cobrada na operação original.
