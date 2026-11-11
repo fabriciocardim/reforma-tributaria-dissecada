@@ -1,0 +1,4 @@
+Diagnóstico da captura do texto de lc-116-2003
+https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm
+cabeçalhos padrão: fetch failed
+com User-Agent do projeto: fetch failed
