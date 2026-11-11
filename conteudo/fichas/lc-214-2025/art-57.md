@@ -1,0 +1,23 @@
+---
+norma: lc-214-2025
+artigo: art57
+conferida: false
+gerada_em: 2026-11-11
+impressao_digital: 49933a3469404572f0e2dd1b8f8ea126c2c17657b1bbabfeeec40132497cacfa
+---
+## O que é
+A definição dos bens e serviços de uso ou consumo pessoal, para os quais não há crédito do Imposto sobre Bens e Serviços (IBS) e da Contribuição Social sobre Bens e Serviços (CBS).
+
+## Para que serve
+Abre a Seção dos bens e serviços de uso ou consumo pessoal: lista o que assim se considera, as exceções para o que é usado na atividade econômica e a vedação do crédito. Vários dispositivos têm alteração ou inclusão pela Lei Complementar 227/2026, e três parágrafos constam como revogados.
+
+## Como funciona
+O caput lista, no inciso I, estes bens e serviços: joias, pedras e metais preciosos (alínea "a"); obras de arte e antiguidades de valor histórico ou arqueológico (b); bebidas alcoólicas (c); derivados do tabaco (d); armas e munições (e); bens e serviços recreativos, esportivos e estéticos (f); e bens e serviços relacionados à aquisição ou à manutenção dos bens desse inciso (g, incluída pela Lei Complementar 227/2026). O inciso II (redação dada pela Lei Complementar 227/2026) abrange os bens e serviços adquiridos pelo contribuinte e fornecidos de forma não onerosa ou a valor inferior ao de mercado para o próprio contribuinte, quando pessoa física (alínea "a"); para as pessoas físicas que sejam sócios, acionistas, administradores e membros de conselhos de administração e fiscal e comitês de assessoramento do conselho de administração previstos em lei (b); para os empregados (c, redação dada pela Lei Complementar 227/2026); e para os cônjuges, companheiros ou parentes, consanguíneos ou afins, até o terceiro grau, das pessoas das alíneas "a", "b" e "c" (d).
+
+O § 1º diz que, para o inciso II do caput, são de uso ou consumo pessoal, entre outros, o bem imóvel residencial e os demais bens e serviços relacionados à sua aquisição e manutenção (inciso I) e o veículo e os demais bens e serviços relacionados à sua aquisição e manutenção, inclusive seguro e combustível (II). O § 2º considera de uso e consumo pessoal os bens e serviços relacionados à gestão, no caso de sociedade cuja atividade principal seja a gestão de bens e de ativos financeiros das pessoas físicas do inciso II do caput (family office).
+
+O § 3º afasta a qualificação de uso ou consumo pessoal dos bens e serviços utilizados preponderantemente na atividade econômica do contribuinte, segundo critérios: os bens das alíneas "a" a "d" do inciso I que sejam comercializados ou usados na fabricação de bens a comercializar (inciso I); os bens da alínea "e" do inciso I que cumpram o inciso I do parágrafo ou sejam usados por empresas de segurança (II); os bens da alínea "f" do inciso I que cumpram o inciso I do parágrafo ou sejam usados exclusivamente em estabelecimento físico pelos clientes (III). O inciso IV do § 3º cobre bens e serviços do inciso II do caput que consistam em uniformes e fardamentos (a); equipamentos de proteção individual (b); alimentação e bebida não alcoólica disponibilizada no estabelecimento a empregados e administradores durante a jornada (c); serviços de saúde (d) e de creche (e) nas mesmas condições; serviços de planos de assistência à saúde para empregados e dependentes em decorrência de acordo ou convenção coletiva, com créditos equivalentes aos débitos do fornecedor apurados e extintos conforme o regime específico de planos de assistência à saúde (f, redação dada pela Lei Complementar 227/2026); benefícios educacionais a empregados e dependentes em decorrência de acordo ou convenção coletiva, oferecidos a todos os empregados, autorizada a diferenciação em favor dos de menor renda ou com maior núcleo familiar (g); e fornecimento de vale-transporte, vale-refeição e vale-alimentação, com créditos equivalentes aos débitos do fornecedor apurados e extintos conforme o regime específico de serviços financeiros, observada a disciplina dos arranjos de pagamento (h, incluída pela Lei Complementar 227/2026). O inciso V cobre outros bens e serviços que obedeçam a critérios do regulamento.
+
+Os §§ 4º, 6º e 7º constam como revogados pela Lei Complementar 227/2026. O § 5º veda a apropriação de créditos em relação aos bens e serviços de uso ou consumo pessoal de que trata o artigo. O § 8º manda o regulamento dispor sobre a forma de identificação da pessoa física destinatária desses bens e serviços.
+
+O § 9º, incluído pela Lei Complementar 227/2026, permite ao contribuinte, na alienação de bem que não tenha permitido a apropriação de crédito na aquisição, nos termos do § 5º, excluir da base de cálculo o valor de aquisição do bem, até o limite do valor da alienação, desde que seja possível a identificação inequívoca do bem.
