@@ -3,6 +3,8 @@
  * ano) precisa existir no texto do artigo, e toda sigla precisa vir definida entre parênteses na própria
  * explicação. Aponta; quem escreveu decide. Sai com código 1 se achar algo.
  * Uso: node gerador/verificar.ts [norma] [posição inicial] [posição final]   (posições 1-based)
+ *      node gerador/verificar.ts <norma> art-43,art-50,...                     (só estes endereços)
+ * Aceita `impressao_digital: carimbar` (ainda sem carimbo): confere o conteúdo mesmo assim.
  */
 import { readFileSync, readdirSync } from "node:fs";
 import { redacaoAtual } from "../captura/ler.ts";
@@ -57,18 +59,20 @@ function verificar(): number {
   const [slug = "lc-214-2025", de, ate] = process.argv.slice(2);
   const base = carregarBaseSincrona();
   const n = obterNorma(base, slug);
-  const inicio = de ? Number(de) : 1;
-  const fim = ate ? Number(ate) : n.artigos.length;
+  const lista = de && !/^\d+$/.test(de) ? new Set(de.split(",")) : null;
+  const inicio = lista ? 1 : de ? Number(de) : 1;
+  const fim = lista ? n.artigos.length : ate ? Number(ate) : n.artigos.length;
   let total = 0;
   let comProblema = 0;
   const pasta = new URL(`conteudo/fichas/${slug}/`, RAIZ);
   for (const arq of readdirSync(pasta).filter((a) => a.endsWith(".md")).sort()) {
     const posicao = n.artigos.findIndex((a) => n.slugs.get(a.id) === arq.replace(/\.md$/, "")) + 1;
     if (posicao < inicio || posicao > fim) continue;
+    if (lista && !lista.has(arq.replace(/\.md$/, ""))) continue;
     total++;
     const achados: string[] = [];
     try {
-      const e = lerExplicacao(readFileSync(new URL(arq, pasta), "utf8"));
+      const e = lerExplicacao(readFileSync(new URL(arq, pasta), "utf8").replace(/^impressao_digital:\s*carimbar\s*$/m, `impressao_digital: ${"0".repeat(64)}`));
       const artigo = n.artigos[posicao - 1]!;
       if (e.artigo !== artigo.id) achados.push(`artigo "${e.artigo}" não é o do arquivo (${artigo.id})`);
       const rotulo = redacaoAtual(artigo)?.rotulo ?? "";
