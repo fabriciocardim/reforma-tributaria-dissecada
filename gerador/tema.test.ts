@@ -80,7 +80,8 @@ test("página: mapa, explicação, antes e depois com lacuna, transição, artig
   assert.match(html, /class="aviso nao-conferida"><strong>Ainda não conferido/);
   assert.equal((html.match(/Gerado por inteligência artificial — não é texto de lei/g) ?? []).length, 4);
   assert.equal((html.match(/Regime anterior ainda não carregado/g) ?? []).length, fato.antesDepois.length);
-  assert.match(html, /href="https:\/\/normas\.leg\.br\/\?urn=urn:lex:br:federal:lei\.complementar:1996;87"/);
+  assert.match(html, /href="https:\/\/www\.planalto\.gov\.br\/ccivil_03\/leis\/lcp\/lcp87\.htm"/);
+  assert.match(html, /href="https:\/\/www\.planalto\.gov\.br\/ccivil_03\/leis\/lcp\/lcp116\.htm"/);
   assert.match(html, /href="\.\.\/\.\.\/lei\/lc-214-2025\/art-4\/#art4_par2">LC 214\/2025, Art\. 4º, § 2º/);
   assert.match(html, /<strong>Constituição Federal de 1988, Art\. 156-A<\/strong>/);
   assert.match(html, /<span class="selo nao-conferida">Não conferido<\/span>/);

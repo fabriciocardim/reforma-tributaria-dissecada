@@ -287,7 +287,7 @@ ${texto}
 ${linhas}
 </tbody>
 </table></div>
-<p class="nota">O lado "antes" fica como lacuna enquanto o texto da legislação anterior (Lei Complementar 87/1996 e Lei Complementar 116/2003, entre outras) não estiver carregado: <a href="https://normas.leg.br/?urn=urn:lex:br:federal:lei.complementar:1996;87">Lei Complementar 87/1996 ↗</a> · <a href="https://normas.leg.br/?urn=urn:lex:br:federal:lei.complementar:2003;116">Lei Complementar 116/2003 ↗</a>.</p>
+<p class="nota">O lado "antes" fica como lacuna enquanto o texto da legislação anterior (Lei Complementar 87/1996 e Lei Complementar 116/2003, entre outras) não estiver carregado: <a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp87.htm">Lei Complementar 87/1996 (Planalto) ↗</a> · <a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm">Lei Complementar 116/2003 (Planalto) ↗</a>.</p>
 </section>
 
 <section aria-labelledby="transicao" class="ia">
