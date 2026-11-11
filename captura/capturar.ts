@@ -36,6 +36,24 @@ async function manifestoAnterior(): Promise<Manifesto | null> {
   }
 }
 
+const CABECALHOS_DO_TEXTO: Record<string, string>[] = [{}, { Accept: "*/*" }, { Accept: "text/html" }, { Accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8" }];
+
+/** O endereço do texto das leis sem estrutura: tenta variações de Accept e devolve cada resultado. */
+async function baixarTexto(url: string): Promise<{ html: Buffer | null; tentativas: string[] }> {
+  const tentativas: string[] = [];
+  for (const cabecalhos of CABECALHOS_DO_TEXTO) {
+    const rotulo = Object.keys(cabecalhos).length ? `Accept ${cabecalhos.Accept}` : "sem Accept";
+    try {
+      const r = await fetch(url, { headers: cabecalhos });
+      tentativas.push(`${rotulo}: HTTP ${r.status} ${r.headers.get("content-type") ?? ""}`.trim());
+      if (r.status === 200) return { html: Buffer.from(await r.arrayBuffer()), tentativas };
+    } catch (erro) {
+      tentativas.push(`${rotulo}: ${erro instanceof Error ? erro.message : String(erro)}`);
+    }
+  }
+  return { html: null, tentativas };
+}
+
 async function capturar(): Promise<void> {
   await mkdir(PASTA, { recursive: true });
   const anterior = await manifestoAnterior();
@@ -61,17 +79,25 @@ async function capturar(): Promise<void> {
     const sha256 = createHash("sha256").update(bytes).digest("hex");
     const item: ItemManifesto = { nome: fonte.nome, urn: fonte.urn, bytes: bytes.length, sha256, modificadaNaFonte: json.dateModified ?? null };
     if (fonte.textoHtml) {
-      const url = json.encoding?.find((e) => e.version === "Current")?.contentUrl;
-      const resposta = url ? await fetch(url, { headers: { Accept: "text/html" } }).catch(() => null) : null;
-      if (!url || resposta?.status !== 200) {
-        const motivo = !url ? "a fonte não informa o endereço do texto vigente" : `o texto respondeu HTTP ${resposta?.status ?? "sem resposta"}`;
+      const versoes = json.encoding ?? [];
+      const url = versoes.find((e) => e.version === "Current")?.contentUrl;
+      const baixado = url ? await baixarTexto(url) : null;
+      if (baixado?.html) {
+        await writeFile(new URL(`${fonte.nome}.html`, PASTA), baixado.html);
+        item.texto = { url: url!, bytes: baixado.html.length, sha256: createHash("sha256").update(baixado.html).digest("hex") };
+        console.log(`${fonte.nome}: texto vigente, ${baixado.html.length} bytes`);
+      } else {
+        const motivo = !url ? "a fonte não informa o endereço do texto vigente" : `o texto não veio (${baixado?.tentativas.join("; ")})`;
         if (!fonte.opcional) throw new Error(`${fonte.nome}: ${motivo}. Nada foi gravado.`);
         console.warn(`${fonte.nome}: ${motivo}; norma opcional, seguindo sem o texto.`);
-      } else {
-        const html = Buffer.from(await resposta.arrayBuffer());
-        await writeFile(new URL(`${fonte.nome}.html`, PASTA), html);
-        item.texto = { url, bytes: html.length, sha256: createHash("sha256").update(html).digest("hex") };
-        console.log(`${fonte.nome}: texto vigente, ${html.length} bytes`);
+        const linhas = [`Diagnóstico da captura do texto de ${fonte.nome}`, `Endereços informados pela fonte:`];
+        for (const e of versoes) linhas.push(`  ${e.version}: ${e.contentUrl ?? "(sem endereço)"}`);
+        linhas.push("Tentativas no texto vigente:", ...(baixado?.tentativas.map((t) => `  ${t}`) ?? ["  (nenhuma)"]));
+        for (const e of versoes.filter((v) => v.version !== "Current" && v.contentUrl)) {
+          const outro = await baixarTexto(e.contentUrl!);
+          linhas.push(`Tentativas em ${e.version}:`, ...outro.tentativas.map((t) => `  ${t}`));
+        }
+        await writeFile(new URL(`${fonte.nome}.diagnostico.txt`, PASTA), linhas.join("\n") + "\n");
       }
     }
     normas.push(item);
