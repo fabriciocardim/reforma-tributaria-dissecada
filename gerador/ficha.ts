@@ -9,7 +9,8 @@ import { emBloco, TIPOS_ESTRUTURA, type Catalogo, type Destino, type Norma } fro
 import { resolverLocais } from "./referencias.ts";
 import { renderizarExplicacao, type Explicacao } from "./explicacao.ts";
 import { escapar, renderizarTextoLegal, type Opcoes } from "./remissao.ts";
-import { dataBr, subarvore } from "./util.ts";
+import { dataBr, idUrl, subarvore } from "./util.ts";
+import type { Visao } from "./visao.ts";
 
 export { dataBr, subarvore };
 
@@ -25,6 +26,8 @@ export interface EntradaLinhaDoTempo {
 }
 
 export interface ConfiguracaoFicha {
+  /** Visão geral por norma (conteudo/visao); a trilha aponta para as páginas dos blocos. */
+  visoes?: Map<string, Visao>;
   catalogo: Catalogo;
   capturadoEm: string;
   /** Mostra "Efeitos: não carregada" na versão (a tabela de efeitos do art. 544 ainda não existe). */
@@ -235,7 +238,7 @@ export function gerarFicha(cfg: ConfiguracaoFicha, norma: Norma, idArtigo: strin
 
   const trilha = [
     `<a href="../">${escapar(norma.nome)}</a>`,
-    ...montarTrilha(norma, artigo).map((t) => `<a href="../#${escapar(t.id)}" title="${escapar(t.titulo)}">${escapar(t.rotulo)}</a>`),
+    ...montarTrilha(norma, artigo).map((t) => `<a href="../bloco/${idUrl(t.id)}/" title="${escapar(t.titulo)}">${escapar(t.rotulo)}</a>`),
   ].join('<span aria-hidden="true">›</span>');
 
   const vizinho = (a: Dispositivo | undefined, anterior: boolean): string => {
@@ -244,6 +247,12 @@ export function gerarFicha(cfg: ConfiguracaoFicha, norma: Norma, idArtigo: strin
     return `<a href="../${norma.slugs.get(a.id)}/">${anterior ? `‹ ${escapar(r)}` : `${escapar(r)} ›`}</a>`;
   };
 
+  const trilhaNos = montarTrilha(norma, artigo);
+  const ultimo = trilhaNos[trilhaNos.length - 1];
+  const blocoDoArtigo = ultimo ? cfg.visoes?.get(norma.slug)?.blocos.get(ultimo.id) : undefined;
+  const nesteBloco = ultimo
+    ? `<p class="neste-bloco">Neste bloco (<a href="../bloco/${idUrl(ultimo.id)}/">${escapar(ultimo.rotulo)}</a>)${blocoDoArtigo ? `: ${escapar(blocoDoArtigo.resumo)} <span class="origem-ia">gerado por inteligência artificial, não é texto de lei</span>` : ""}</p>`
+    : "";
   const doArtigo = cfg.temas?.get(`${norma.slug}|${artigo.id}`) ?? [];
   const temasHtml = doArtigo.length ? `<p class="temas-do-artigo">Tema: ${doArtigo.map((t) => `<a href="../../../tema/${escapar(t.slug)}/">${escapar(t.titulo)}</a>`).join(", ")}</p>` : "";
   const corpo = pagina.no(artigo);
@@ -269,6 +278,7 @@ export function gerarFicha(cfg: ConfiguracaoFicha, norma: Norma, idArtigo: strin
 <h2 id="t1" class="rotulo">Onde estou</h2>
 <nav aria-label="Posição na lei" class="trilha">${trilha}</nav>
 <h1>${escapar(rotuloArtigo)}</h1>
+${nesteBloco}
 ${temasHtml}
 <div class="vizinhos">${vizinho(norma.artigos[posicao - 1], true)}${vizinho(norma.artigos[posicao + 1], false)}</div>
 </section>
@@ -314,6 +324,7 @@ section{background:var(--cartao);border:1px solid var(--borda);border-radius:12p
 .rotulo{margin:0;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B675E}
 .trilha{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;color:var(--suave)}
 .trilha a{text-decoration:none}
+.neste-bloco{margin:8px 0 0;font-size:14px;color:#3D3A34;max-width:820px}
 h1{margin:12px 0 0;font-family:var(--serifa);font-size:34px;font-weight:600;line-height:1.15}
 .temas-do-artigo{margin:10px 0 0;font-size:14px;color:var(--suave)}
 .vizinhos{margin-top:10px;display:flex;justify-content:space-between;font-size:14px}

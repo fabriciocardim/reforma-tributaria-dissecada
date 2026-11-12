@@ -6,10 +6,12 @@ import { redacaoAtual } from "../captura/ler.ts";
 import { dataBr, CSS_BASE } from "./ficha.ts";
 import { emBloco, TIPOS_ESTRUTURA, type Norma } from "./norma.ts";
 import { escapar } from "./remissao.ts";
+import { idUrl } from "./util.ts";
+import type { Visao } from "./visao.ts";
 
 const NIVEL_TITULO: Record<string, number> = { livro: 2, titulo: 3, capitulo: 4, secao: 5, subsecao: 6 };
 
-export function gerarIndice(norma: Norma, capturadoEm: string): string {
+export function gerarIndice(norma: Norma, capturadoEm: string, visao?: Visao): string {
   let corpo = "";
   let lista = false;
   const fechar = (): void => {
@@ -22,7 +24,9 @@ export function gerarIndice(norma: Norma, capturadoEm: string): string {
     if (TIPOS_ESTRUTURA.includes(d.tipo) && v) {
       fechar();
       const n = NIVEL_TITULO[d.tipo] ?? 6;
+      const b = visao?.blocos.get(d.id);
       corpo += `<h${n} id="${escapar(d.id)}" class="est">${escapar(v.rotulo)} ${escapar(v.texto ?? "")}</h${n}>\n`;
+      corpo += `<p class="resumo-bloco"><a href="bloco/${idUrl(d.id)}/">Visão geral deste bloco</a>${b ? ` — ${escapar(b.resumo)} <span class="origem-ia">gerado por inteligência artificial</span>` : ""}</p>\n`;
     } else if (d.tipo === "artigo" && norma.slugs.has(d.id)) {
       if (!lista) corpo += `<ul class="arts">`;
       lista = true;
@@ -57,6 +61,7 @@ const CSS_INDICE = `
 .miolo-indice{max-width:900px;padding-top:24px;padding-bottom:40px;display:block}
 .miolo-indice h1{margin:0 0 8px}
 .est{font-family:var(--serifa);font-weight:600;line-height:1.3;margin:22px 0 8px}
+.resumo-bloco{margin:6px 0 10px;font-size:14px;color:#3D3A34;max-width:820px}
 h2.est{font-size:22px;border-top:2px solid var(--borda);padding-top:16px}
 h3.est{font-size:19px}h4.est{font-size:17px}h5.est,h6.est{font-size:15px;color:var(--suave)}
 .arts{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-wrap:wrap;gap:6px}

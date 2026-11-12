@@ -34,9 +34,9 @@ test("Constituição: do art. 134 reposicionado, a página é a do artigo em vig
   assert.ok(!cf.slugs.has("art134"));
 });
 
-test("trilha do art. 4º: Livro I › Título I › Capítulo II › Seção I, com link para o índice", () => {
+test("trilha do art. 4º: Livro I › Título I › Capítulo II › Seção I, com link para as páginas dos blocos", () => {
   assert.deepEqual(montarTrilha(lc, art4).map((t) => t.rotulo), ["LIVRO I", "TÍTULO I", "CAPÍTULO II", "Seção I"]);
-  assert.match(html4, /<nav aria-label="Posição na lei"[^>]*><a href="\.\.\/">Lei Complementar 214\/2025<\/a>.*href="\.\.\/#liv1".*LIVRO I.*TÍTULO I.*CAPÍTULO II.*Seção I/);
+  assert.match(html4, /<nav aria-label="Posição na lei"[^>]*><a href="\.\.\/">Lei Complementar 214\/2025<\/a>.*href="\.\.\/bloco\/liv1\/".*LIVRO I.*TÍTULO I.*CAPÍTULO II.*Seção I/);
 });
 
 test("art. 1º não tem anterior; o art. 4º tem o 3º e o 5º", () => {

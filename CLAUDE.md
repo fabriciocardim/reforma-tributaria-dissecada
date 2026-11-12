@@ -47,6 +47,12 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 - Como o texto antigo chegou: o normas.leg.br devolve só metadados dessas duas leis (o endereço de texto que informa responde 404) e o Planalto derruba (ECONNRESET) as conexões do ambiente de nuvem e das automações; o Senado responde. A captura (`captura/fontes.ts`, campo `textoHtml`) baixa essas páginas e, se falhar, grava `dados/fonte/*.diagnostico.txt` e mantém o arquivo anterior. Não contorne bloqueios (nem fingindo ser navegador).
 - Feito: o lote 1 inteiro (`fato-gerador`, `nao-incidencia-e-imunidades`, `sujeito-passivo-e-responsabilidade`, `local-da-operacao`, `base-de-calculo`), todos não conferidos. `gerador/tema.test.ts` roda a mesma conferência em todo arquivo de `conteudo/temas`. Faltam os lotes 2 a 4 do `docs/design.md`.
 
+## Visão geral (mapa da lei e blocos)
+
+- Resposta ao pedido de menos leitura de artigo e mais visão do todo. Em `conteudo/visao/<norma>.md`, cada bloco da estrutura (`## liv1_tit1_cap2`, id do nó na base) traz `pergunta`, `resumo`, `regra`, `excecoes` (separadas por " ; "), `chaves` (fichas dos artigos-chave, todas já com "Para que serve"), `conferida`, `conferida_em` e `impressao_digital` (cobre o texto legal das chaves; `npm run carimbar -- visao lc-214-2025`). `gerador/visao.ts` valida; `gerador/bloco.ts` gera `lei/<norma>/bloco/<id>/` (todo nó da estrutura, mesmo sem conteúdo) e `lei/<norma>/mapa/` (livros, títulos e o percurso de uma operação pelos temas).
+- A ficha mostra "Neste bloco" e a trilha aponta para os blocos; o índice liga cada título ao bloco. `gerador/visao.test.ts` confere que todo número e sigla do bloco existem no texto legal das chaves ou nos títulos da estrutura.
+- Feito (12/11/2026): 3 livros, 16 títulos, 5 capítulos do Título I e as 13 seções do Capítulo II do Título I, todos não conferidos. Faltam os demais capítulos, seções e subseções (63 capítulos no total); blocos sem conteúdo aparecem como "Ainda não gerada".
+
 ## Referências fora do repositório
 
 - Documento de design no Claude (origem do `docs/design.md`): https://claude.ai/artifact/488bo3YjWGb2LaqcUaKnxm

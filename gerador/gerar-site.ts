@@ -9,6 +9,9 @@ import { gerarIndice } from "./indice.ts";
 import { gerarInicial } from "./inicial.ts";
 import { carregarBase, mostrarEfeitos } from "./carregar.ts";
 import { carregarExplicacoes } from "./explicacao.ts";
+import { carregarVisao, ehNoDaEstrutura, type Visao } from "./visao.ts";
+import { gerarBloco, gerarMapa } from "./bloco.ts";
+import { idUrl } from "./util.ts";
 import { carregarTemas, gerarTema, impressaoDoTema, situacaoTema } from "./tema.ts";
 
 const RAIZ = new URL("../", import.meta.url);
@@ -36,10 +39,19 @@ async function gerar(): Promise<void> {
     const chave = `${norma.slug}|${artigo.id}`;
     cfg.temas.set(chave, [...(cfg.temas.get(chave) ?? []), { slug: t.tema, titulo: t.titulo }]);
   }
+  const visoes = new Map<string, Visao>();
+  for (const n of normas) {
+    const v = carregarVisao(RAIZ, n, cfg.explicacoes);
+    if (v) visoes.set(n.slug, v);
+  }
+  cfg.visoes = visoes;
+  const ctx = { base, visoes, explicacoes: cfg.explicacoes, temas };
   await rm(new URL("site/", RAIZ), { recursive: true, force: true });
   for (const norma of normas) {
-    await gravar(`lei/${norma.slug}/index.html`, gerarIndice(norma, manifesto.capturadoEm));
+    await gravar(`lei/${norma.slug}/index.html`, gerarIndice(norma, manifesto.capturadoEm, visoes.get(norma.slug)));
     for (const artigo of norma.artigos) await gravar(`lei/${norma.slug}/${norma.slugs.get(artigo.id)}/index.html`, gerarFicha(cfg, norma, artigo.id));
+    for (const no of norma.dispositivos.filter((d) => ehNoDaEstrutura(norma, d))) await gravar(`lei/${norma.slug}/bloco/${idUrl(no.id)}/index.html`, gerarBloco(norma, no, ctx, manifesto.capturadoEm));
+    if (visoes.has(norma.slug)) await gravar(`lei/${norma.slug}/mapa/index.html`, gerarMapa(norma, ctx, manifesto.capturadoEm));
     console.log(`${norma.slug}: ${norma.artigos.length} fichas`);
   }
   for (const t of temas) await gravar(`tema/${t.tema}/index.html`, gerarTema(t, { base, explicacoes: cfg.explicacoes, capturadoEm: manifesto.capturadoEm }));

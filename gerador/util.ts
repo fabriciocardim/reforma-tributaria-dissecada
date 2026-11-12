@@ -17,3 +17,6 @@ export function subarvore(porId: Map<string, Dispositivo>, raiz: Dispositivo): D
   visitar(raiz);
   return saida;
 }
+
+/** id de nó da estrutura → trecho seguro do endereço. */
+export const idUrl = (id: string): string => id.replace(/[^A-Za-z0-9_-]/g, "-");
