@@ -232,7 +232,7 @@ export function gerarTema(t: Tema, d: Disponibilidade): string {
   const linhas = t.antesDepois
     .map((l) => {
       const refs = l.refs.map((r) => `<a href="${escapar(hrefDoRef(r))}">${escapar(rotuloDoRef(base, r))}</a>`).join(" · ");
-      const antes = l.antes ? escapar(l.antes) : `<span class="lacuna">Regime anterior ainda não carregado.</span>`;
+      const antes = l.antes ? escapar(l.antes) : `<span class="lacuna">Regime anterior ainda não verificado para este aspecto.</span>`;
       return `<tr><th scope="row">${escapar(l.aspecto)}</th><td>${antes}</td><td>${escapar(l.depois)}<div class="refs">${refs}</div></td></tr>`;
     })
     .join("\n");
@@ -287,7 +287,7 @@ ${texto}
 ${linhas}
 </tbody>
 </table></div>
-<p class="nota">O lado "antes" fica como lacuna enquanto o texto da legislação anterior (Lei Complementar 87/1996 e Lei Complementar 116/2003, entre outras) não estiver carregado: <a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp87.htm">Lei Complementar 87/1996 (Planalto) ↗</a> · <a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm">Lei Complementar 116/2003 (Planalto) ↗</a>.</p>
+<p class="nota">O lado "antes" cita o texto atualizado da legislação anterior, guardado no repositório (versão do Senado), e cada citação entre aspas é conferida contra ele. Texto no Planalto: <a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp87.htm">Lei Complementar 87/1996 ↗</a> · <a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm">Lei Complementar 116/2003 ↗</a>. Aspecto sem resumo do regime anterior ainda não foi verificado.</p>
 </section>
 
 <section aria-labelledby="transicao" class="ia">

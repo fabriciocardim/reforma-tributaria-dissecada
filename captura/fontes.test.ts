@@ -12,7 +12,7 @@ test("a legislação anterior é opcional e não vira página; as normas do site
     const f = FONTES.find((x) => x.nome === nome)!;
     assert.equal(f.opcional, true, nome);
     assert.equal(f.publicar, false, nome);
-    assert.match(f.textoHtml ?? "", /^https:\/\/www\.planalto\.gov\.br\/ccivil_03\/leis\/lcp\/lcp\d+\.htm$/, nome);
+    assert.match(f.textoHtml ?? "", /^https:\/\/legis\.senado\.leg\.br\/norma\/\d+\/publicacao\/\d+$/, nome);
   }
   for (const nome of ["lc-214-2025", "constituicao-1988", "ec-132-2023"]) {
     const f = FONTES.find((x) => x.nome === nome)!;

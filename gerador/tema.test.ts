@@ -8,6 +8,7 @@ import { gerarInicial } from "./inicial.ts";
 import { carregarTemas, gerarTema, impressaoDoTema, lerRef, lerTema, situacaoTema } from "./tema.ts";
 import { problemas, textoLegalDoArtigo } from "./verificar.ts";
 import { subarvore } from "./util.ts";
+import { LEIS_ANTERIORES, citacoes, problemasDoAntes, textoAnterior } from "./anterior.ts";
 
 const RAIZ = new URL("../", import.meta.url);
 const base = carregarBaseSincrona();
@@ -79,7 +80,7 @@ test("página: mapa, explicação, antes e depois com lacuna, transição, artig
   assert.equal((html.match(/class="cartao/g) ?? []).length, fato.mapa.length);
   assert.match(html, /class="aviso nao-conferida"><strong>Ainda não conferido/);
   assert.equal((html.match(/Gerado por inteligência artificial — não é texto de lei/g) ?? []).length, 4);
-  assert.equal((html.match(/Regime anterior ainda não carregado/g) ?? []).length, fato.antesDepois.length);
+  assert.equal((html.match(/Regime anterior ainda não verificado para este aspecto/g) ?? []).length, fato.antesDepois.filter((l) => !l.antes).length);
   assert.match(html, /href="https:\/\/www\.planalto\.gov\.br\/ccivil_03\/leis\/lcp\/lcp87\.htm"/);
   assert.match(html, /href="https:\/\/www\.planalto\.gov\.br\/ccivil_03\/leis\/lcp\/lcp116\.htm"/);
   assert.match(html, /href="\.\.\/\.\.\/lei\/lc-214-2025\/art-4\/#art4_par2">LC 214\/2025, Art\. 4º, § 2º/);
@@ -121,4 +122,14 @@ test("o tema só cita artigos que já têm 'Para que serve'", () => {
 
 test("conteudo/temas: leitura do arquivo bruto devolve o mesmo tema", () => {
   assert.equal(lerTema(readFileSync(new URL("conteudo/temas/fato-gerador.md", RAIZ), "utf8")).titulo, "Fato gerador");
+});
+
+test('o lado "antes": cada citação entre aspas e cada número existem no texto guardado da legislação anterior', () => {
+  const textos = LEIS_ANTERIORES.map((l) => textoAnterior(RAIZ, l.nome));
+  const comAntes = fato.antesDepois.filter((l) => l.antes);
+  assert.ok(comAntes.length >= 5);
+  for (const l of comAntes) {
+    assert.ok(citacoes(l.antes!).length >= 1, `${l.aspecto}: o "antes" precisa de ao menos uma citação exata`);
+    assert.deepEqual(problemasDoAntes(l.antes!, textos), [], l.aspecto);
+  }
 });

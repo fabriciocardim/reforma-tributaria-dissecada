@@ -12,8 +12,8 @@ export interface FonteNorma {
   publicar?: boolean;
   /**
    * A resposta da norma traz só metadados (leis antigas, sem estrutura por dispositivo; o endereço de texto
-   * que a fonte informa responde 404): baixa também esta página HTML, sem alteração, para
-   * dados/fonte/<nome>.html. O texto vem com a codificação original da página.
+   * que a fonte informa responde 404; o Planalto derruba as conexões de nuvem): baixa também esta página do
+   * Senado (texto atualizado da norma, no Sigen), sem alteração, para dados/fonte/<nome>.html.
    */
   textoHtml?: string;
 }
@@ -23,8 +23,8 @@ export const FONTES: FonteNorma[] = [
   { nome: "constituicao-1988", urn: "urn:lex:br:federal:constituicao:1988-10-05;1988" },
   { nome: "ec-132-2023", urn: "urn:lex:br:federal:emenda.constitucional:2023-12-20;132" },
   // Legislação anterior: base do lado "antes" dos temas; não vira ficha nem índice.
-  { nome: "lc-87-1996", urn: "urn:lex:br:federal:lei.complementar:1996-09-13;87", opcional: true, publicar: false, textoHtml: "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp87.htm" },
-  { nome: "lc-116-2003", urn: "urn:lex:br:federal:lei.complementar:2003-07-31;116", opcional: true, publicar: false, textoHtml: "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm" },
+  { nome: "lc-87-1996", urn: "urn:lex:br:federal:lei.complementar:1996-09-13;87", opcional: true, publicar: false, textoHtml: "https://legis.senado.leg.br/norma/572842/publicacao/34621002" },
+  { nome: "lc-116-2003", urn: "urn:lex:br:federal:lei.complementar:2003-07-31;116", opcional: true, publicar: false, textoHtml: "https://legis.senado.leg.br/norma/572871/publicacao/34621012" },
 ];
 
 export function urlDaFonte(urn: string): string {

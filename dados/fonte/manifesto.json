@@ -28,14 +28,24 @@
       "urn": "urn:lex:br:federal:lei.complementar:1996-09-13;87",
       "bytes": 4756,
       "sha256": "c1e55cc9d4f23ffb53d81a2b3534dc5aacfefaf258fa726e4cddc2314fdccc1d",
-      "modificadaNaFonte": null
+      "modificadaNaFonte": null,
+      "texto": {
+        "url": "https://legis.senado.leg.br/norma/572842/publicacao/34621002",
+        "bytes": 193775,
+        "sha256": "bb99a3ea4077e2087b6006a5631b8d09f36353326cbc3bb4b1c498aba25caba7"
+      }
     },
     {
       "nome": "lc-116-2003",
       "urn": "urn:lex:br:federal:lei.complementar:2003-07-31;116",
       "bytes": 6074,
       "sha256": "da6e5638d7f048bd20ed9dad5941f428f8f3a3e980a2e962b20a31349a0d55d7",
-      "modificadaNaFonte": null
+      "modificadaNaFonte": null,
+      "texto": {
+        "url": "https://legis.senado.leg.br/norma/572871/publicacao/34621012",
+        "bytes": 150831,
+        "sha256": "da3ba7e8c199eb9293f76274767098fd804d7ec600a05094d9be71372c675cd5"
+      }
     }
   ]
 }
