@@ -45,7 +45,7 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 - A impressão digital do tema cobre o texto legal de TODOS os artigos que ele cita (`npm run carimbar -- temas`). Todo artigo citado precisa já ter "Para que serve" e todo número e sigla do tema precisa existir no texto desses artigos (`gerador/tema.test.ts` confere).
 - O lado "antes" cita a legislação anterior, cujo texto fica em `dados/fonte/lc-87-1996.html` e `dados/fonte/lc-116-2003.html` (versão atualizada do Senado, no Sigen: https://legis.senado.leg.br/norma/572842/publicacao/34621002 e .../norma/572871/publicacao/34621012). Cada resumo deve trazer ao menos uma citação exata entre aspas curvas (“…”), e `gerador/tema.test.ts` confere cada citação e cada número contra esse texto (`gerador/anterior.ts`). Aspecto sem texto lido fica como lacuna; não escreva o regime anterior de memória.
 - Como o texto antigo chegou: o normas.leg.br devolve só metadados dessas duas leis (o endereço de texto que informa responde 404) e o Planalto derruba (ECONNRESET) as conexões do ambiente de nuvem e das automações; o Senado responde. A captura (`captura/fontes.ts`, campo `textoHtml`) baixa essas páginas e, se falhar, grava `dados/fonte/*.diagnostico.txt` e mantém o arquivo anterior. Não contorne bloqueios (nem fingindo ser navegador).
-- Feito: `fato-gerador`. Faltam os outros doze temas do `docs/design.md`.
+- Feito: o lote 1 inteiro (`fato-gerador`, `nao-incidencia-e-imunidades`, `sujeito-passivo-e-responsabilidade`, `local-da-operacao`, `base-de-calculo`), todos não conferidos. `gerador/tema.test.ts` roda a mesma conferência em todo arquivo de `conteudo/temas`. Faltam os lotes 2 a 4 do `docs/design.md`.
 
 ## Referências fora do repositório
 
@@ -56,4 +56,4 @@ Site estático e aberto para estudar a reforma tributária do consumo (Lei Compl
 
 - Escreva em português do Brasil e não use siglas ou abreviações sem a descrição por extenso.
 - Ele estuda 3 horas por dia, de segunda a sábado, para Auditor Fiscal da Secretaria da Fazenda da Bahia (Tecnologia da Informação, banca Cesgranrio). Construir o site não pode tirar tempo desse estudo; prefira entregas pequenas.
-- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; demais temas do lote 1 (com o "antes" a partir de `dados/fonte`); "antes" do aspecto pagamento antecipado do tema fato-gerador; palavras-gatilho.
+- Próximos passos em aberto: conferir 20 dispositivos à mão contra o Planalto; estrutura dos anexos; tabela de efeitos do art. 544; lotes 2 a 4 de temas; aspectos do lote 1 sem "antes" (pagamento antecipado, plataformas digitais, não contribuintes, valor de mercado e arbitramento); palavras-gatilho.

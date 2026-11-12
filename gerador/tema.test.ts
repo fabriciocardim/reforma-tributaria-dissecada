@@ -133,3 +133,26 @@ test('o lado "antes": cada citação entre aspas e cada número existem no texto
     assert.deepEqual(problemasDoAntes(l.antes!, textos), [], l.aspecto);
   }
 });
+
+for (const t of temas) {
+  test(`tema ${t.tema}: escrito contra o texto legal atual, só cita artigos explicados e confere números, siglas e citações`, () => {
+    assert.equal(impressaoDoTema(base, t.artigos), t.impressaoDigital, "impressão digital defasada");
+    assert.equal(t.conferida, false);
+    const legal = t.artigos
+      .map((r) => {
+        const n = norma(base, r.norma);
+        const a = n.artigos.find((x) => n.slugs.get(x.id) === r.ficha)!;
+        assert.ok(explicacoes.has(`${n.slug}|${a.id}`), `${r.norma}/${r.ficha} sem explicação`);
+        return textoLegalDoArtigo(n.porId, a);
+      })
+      .join("\n");
+    const corpo = [...t.mapa.map((c) => c.frase), ...t.secoes.flatMap((s) => s.paragrafos), ...t.antesDepois.map((l) => l.depois), ...t.transicao].join("\n");
+    assert.deepEqual(problemas(corpo, legal, ""), []);
+    const textos = LEIS_ANTERIORES.map((l) => textoAnterior(RAIZ, l.nome));
+    for (const l of t.antesDepois.filter((x) => x.antes)) {
+      assert.ok(citacoes(l.antes!).length >= 1, `${l.aspecto}: sem citação exata`);
+      assert.deepEqual(problemasDoAntes(l.antes!, textos), [], l.aspecto);
+    }
+    assert.ok(t.antesDepois.some((l) => l.antes), "nenhum aspecto com o regime anterior");
+  });
+}
