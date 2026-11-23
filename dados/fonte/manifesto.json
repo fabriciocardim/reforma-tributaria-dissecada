@@ -1,19 +1,19 @@
 {
-  "capturadoEm": "2026-11-16T19:35:32.068Z",
+  "capturadoEm": "2026-11-23T21:21:38.868Z",
   "origem": "normas.leg.br, script de captura",
   "normas": [
     {
       "nome": "lc-214-2025",
       "urn": "urn:lex:br:federal:lei.complementar:2025-01-16;214",
-      "bytes": 5413321,
-      "sha256": "5aa0d84c691f1cf94e43a592abcb7d59585edbf99faf58cd5e759ac975be8dc6",
+      "bytes": 5413314,
+      "sha256": "5963186f3940766944656d817bc93273673e7deff92a06d8a0d1ecc5b5670df7",
       "modificadaNaFonte": "2026-08-27"
     },
     {
       "nome": "constituicao-1988",
       "urn": "urn:lex:br:federal:constituicao:1988-10-05;1988",
       "bytes": 4794163,
-      "sha256": "2d2e64e7fe3821bec7831c4a153bfdbe9bf375189131a1304f64acdfeae4f213",
+      "sha256": "ebfb01427d782f98f240d309e57b9dcb4226284257ad6a75bae4978d531cfa09",
       "modificadaNaFonte": "2026-10-16"
     },
     {
